@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Synthetic Data Prompt Generator</title>
+<style>
+:root{--ivory:#FAF9F5;--slate:#141413;--clay:#D97757;--oat:#E3DACC;--olive:#788C5D;--gray-100:#F0EEE6;--gray-300:#D1CFC5;--gray-500:#87867F;--gray-700:#3D3D3A;--white:#FFFFFF;--danger:#B04A4A;--warning:#C78E3F;--warning-ink:#A06A2A;--serif:ui-serif,Georgia,serif;--sans:system-ui,-apple-system,sans-serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--border:1.5px solid var(--gray-300);--shadow-lg:0 12px 28px rgba(20,20,19,.12);color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--ivory);color:var(--slate);font-family:var(--sans);font-size:15px;line-height:1.55;font-weight:430;-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:232px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--gray-300);padding:32px 16px;display:flex;flex-direction:column;gap:2px}
+.brand{padding:0 12px 24px}.brand-name{font-family:var(--serif);font-size:20px;line-height:1.2;margin-top:4px}
+.nav{display:block;padding:8px 12px;border-radius:8px;color:var(--gray-700);text-decoration:none;font-size:14px;font-weight:500}
+.nav:hover{background:var(--gray-100)}.nav.active{background:var(--white);border:var(--border);color:var(--slate);padding:6.5px 10.5px}
+.navlbl{padding:20px 12px 6px}
+.side-foot{margin-top:auto;padding:12px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--gray-300)}
+.main{padding:56px 40px 96px;min-width:0}.view{max-width:980px;margin:0 auto}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px;border-right:0;border-bottom:1px solid var(--gray-300)}.brand,.navlbl,.side-foot{display:none}.main{padding:32px 20px 80px}}
+h1{font-family:var(--serif);font-size:32px;line-height:1.2;font-weight:500;letter-spacing:-.01em;margin:4px 0 8px}
+h2{font-family:var(--serif);font-size:24px;line-height:1.3;font-weight:500;margin:4px 0 0}
+h3{font-family:var(--serif);font-size:18px;font-weight:500;margin:0}
+.sub{color:var(--gray-500);margin:0 0 48px;max-width:720px}
+.eyebrow,.lbl{font-family:var(--mono);font-size:11px;line-height:1.4;font-weight:500;color:var(--gray-500);text-transform:uppercase;letter-spacing:.08em}
+.lbl{display:block;margin-bottom:6px;color:var(--gray-700)}
+section{margin-bottom:64px}
+.sh{border-bottom:1px solid var(--gray-300);padding-bottom:12px;margin-bottom:28px}
+.panel{background:var(--white);border:var(--border);border-radius:12px;padding:24px}
+.grid{display:grid;gap:20px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:900px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.input,select.input{height:38px;padding:0 12px;font-size:14px;color:var(--slate);background:var(--white);border:var(--border);border-radius:8px;outline:none;width:100%;font-family:var(--sans)}
+.input:focus,textarea:focus{border-color:var(--clay);box-shadow:0 0 0 3px rgba(217,119,87,.15)}
+textarea{width:100%;padding:12px;font-size:14px;border:var(--border);border-radius:8px;font-family:var(--sans);color:var(--slate);outline:none;resize:vertical}
+.num{width:76px;font-family:var(--mono);text-align:right}
+input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;width:16px;height:16px;margin:3px 0 0;border:1.5px solid var(--gray-500);border-radius:4px;background:var(--white);display:inline-grid;place-content:center;cursor:pointer}
+input[type=checkbox]::after{content:"";width:8px;height:4px;border-left:2px solid var(--clay);border-bottom:2px solid var(--clay);transform:translateY(-1px) rotate(-45deg);opacity:0}
+input[type=checkbox]:checked{border-color:var(--clay)}input[type=checkbox]:checked::after{opacity:1}
+input[type=checkbox]:disabled{background:var(--gray-100);cursor:default}
+input[type=checkbox]:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(217,119,87,.2)}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.step{display:inline-flex;align-items:center;gap:4px}.step.full{display:flex}.step.full .input{flex:1}
+.step-btns{display:inline-flex;flex-direction:column;gap:2px}
+.step-btns button{width:22px;height:17px;padding:0;border:1.5px solid var(--gray-300);border-radius:4px;background:var(--white);color:var(--slate);font-size:8px;line-height:1;cursor:pointer}
+.step-btns button:hover{background:var(--gray-100);border-color:var(--gray-500)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 16px;font-family:var(--sans);font-size:14px;font-weight:500;border-radius:8px;border:1.5px solid transparent;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--clay);color:var(--white)}.btn-primary:hover{background:#C7684C}
+.btn-secondary{background:var(--white);color:var(--slate);border-color:var(--gray-300)}.btn-secondary:hover{background:var(--gray-100)}
+.btn-ghost{background:transparent;color:var(--gray-700);height:30px;padding:0 10px;font-size:13px}.btn-ghost:hover{background:var(--gray-100)}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 9px;font-size:12px;font-weight:500;border-radius:999px;font-family:var(--mono)}
+.badge-neutral{background:var(--gray-100);color:var(--gray-700)}.badge-success{background:rgba(120,140,93,.16);color:var(--olive)}.badge-warning{background:rgba(199,142,63,.16);color:var(--warning-ink)}.badge-accent{background:rgba(217,119,87,.14);color:var(--clay)}
+.hint{font-size:12px;color:var(--gray-500);margin-top:6px}
+.warn{font-size:13px;color:var(--warning-ink);background:rgba(199,142,63,.10);border-radius:8px;padding:8px 12px;margin-top:10px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:14px}
+.opt:hover{background:var(--gray-100)}.opt small{display:block;color:var(--gray-500);font-size:12px}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.picker{position:relative}.picker-btn{width:100%;justify-content:space-between;height:40px}
+.pop{position:absolute;z-index:20;top:46px;left:0;right:0;background:var(--white);border:var(--border);border-radius:12px;box-shadow:var(--shadow-lg);padding:12px;display:none}
+.pop.open{display:block}
+.pop-list{max-height:280px;overflow:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 4px 0 10px;background:var(--gray-100);border-radius:999px;font-size:13px}
+.chip button{border:0;background:transparent;cursor:pointer;color:var(--gray-500);font-size:15px;line-height:1;padding:0 4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);padding:8px;border-bottom:1px solid var(--gray-300)}
+td{padding:8px;border-bottom:1px solid var(--gray-100);vertical-align:middle}td.m{font-family:var(--mono);color:var(--gray-700)}
+.mix{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;font-size:14px;margin-top:16px}
+.fgroup{border:var(--border);border-radius:12px;background:var(--white);margin-bottom:16px}
+.fhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--gray-100);gap:8px;flex-wrap:wrap}
+.fbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;padding:8px}
+@media(max-width:720px){.fbody,.pop-list{grid-template-columns:1fr}}
+.fname{font-family:var(--mono);font-size:13px}
+.tag{font-family:var(--mono);font-size:10px;color:var(--warning-ink);margin-left:6px;text-transform:uppercase;letter-spacing:.06em}
+.sticky{position:sticky;top:0;z-index:10;background:var(--ivory);padding:12px 0;border-bottom:1px solid var(--gray-300);margin-bottom:20px}
+.out{font-family:var(--mono);font-size:12.5px;line-height:1.55;min-height:420px;background:var(--gray-100);border-color:var(--gray-300)}
+.callout{background:var(--oat);border-radius:12px;padding:16px 20px;font-size:14px}
+.stepn{font-family:var(--mono);font-size:12px;color:var(--clay);font-weight:500}
+.card p{margin:8px 0 16px;font-size:14px;color:var(--gray-700)}
+.prof-on{border-color:var(--clay)}
+body:not(.use-profile) .profile-only{display:none!important}body.use-profile .no-profile{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<nav class="side" id="side">
+<div class="brand"><div class="eyebrow">Synthetic data</div><div class="brand-name">Prompt Generator</div></div>
+<a class="nav" href="#home" data-nav="home">Home</a>
+<div class="eyebrow navlbl">Data types</div>
+</nav>
+<main class="main" id="main">
+<div class="view" id="view-home">
+<h1>Synthetic Data Prompt Generator</h1>
+<p class="sub">Build a detailed prompt that any LLM can use to generate realistic, entirely fictional test data, with exactly the fields, countries and mix you choose.</p>
+
+<section>
+<div class="sh"><div class="eyebrow">01 — How it works</div><h2>Four steps</h2></div>
+<div class="grid g4">
+<div class="panel"><div class="stepn">01</div><h3>Set up a profile</h3><p class="hint" style="font-size:14px">Optional. Share one company, set of sites and ID conventions across every dataset so they line up.</p></div>
+<div class="panel"><div class="stepn">02</div><h3>Pick a data type</h3><p class="hint" style="font-size:14px">Choose HR, Facilities or CMDB from the sidebar.</p></div>
+<div class="panel"><div class="stepn">03</div><h3>Choose options</h3><p class="hint" style="font-size:14px">Tick fields, set countries and mixes. The prompt updates as you go.</p></div>
+<div class="panel"><div class="stepn">04</div><h3>Copy the prompt</h3><p class="hint" style="font-size:14px">Paste it into ChatGPT, Claude, Gemini or another LLM. Ask for a script for large datasets.</p></div>
+</div>
+</section>
+
+<section>
+<div class="sh"><div class="eyebrow">02 — Company profile</div><h2>Do you want to use a shared company profile?</h2></div>
+<div class="panel" id="profPanel">
+<label class="opt" style="padding:4px 0"><input type="checkbox" id="useProf"><span><b style="font-weight:500">Yes, use a shared company profile</b><small>Every data type uses the same company name, email domain, countries, site IDs, employee IDs and cost centers, so HR, Facilities and CMDB data line up when you generate them separately.</small></span></label>
+<div id="profBody" hidden>
+<div class="grid g3" style="margin-top:24px">
+<div><label class="lbl" for="pCo">Fictional company name</label><input id="pCo" class="input" value="Meridian Works"></div>
+<div><label class="lbl" for="pDom">Company email domain</label><input id="pDom" class="input" value="meridianworks.example"><div class="hint">.example is reserved and can never be a real domain.</div></div>
+<div><label class="lbl" for="pAsof">“Today” for the data</label><input id="pAsof" class="input" type="date"></div>
+</div>
+<h3 style="margin:32px 0 12px">Countries and offices</h3>
+<div id="profGeo"></div>
+<h3 style="margin:32px 0 4px">Shared conventions</h3>
+<p class="hint" style="margin:0 0 12px">Every prompt includes these, so separately generated files match.</p>
+<div class="grid g2">
+<div><span class="lbl">Site IDs</span><div style="max-height:260px;overflow:auto"><table><thead><tr><th>Site ID</th><th>City</th><th>Country</th></tr></thead><tbody id="siteTbl"></tbody></table></div><div class="hint">Data centers, if any, use LOC-&lt;country&gt;-DC1. Remote employees use LOC-&lt;country&gt;-REMOTE.</div></div>
+<div><span class="lbl">IDs and cost centers</span><table><tbody id="convTbl"></tbody></table></div>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="sh"><div class="eyebrow">03 — Data types</div><h2>What you can generate</h2></div>
+<div class="grid g3" id="typeCards"></div>
+</section>
+
+<section>
+<div class="sh"><div class="eyebrow">04 — Tips</div><h2>Getting good results</h2></div>
+<div class="callout">
+<p style="margin:0 0 8px"><b style="font-weight:500">Ask for a script for anything over about 100 rows.</b> Chat models stop partway through long tables, but a script generates any number of rows consistently, and you can rerun it to get identical data.</p>
+<p style="margin:0 0 8px"><b style="font-weight:500">For the tightest links between datasets,</b> generate HR first, then attach that file when you paste the Facilities or CMDB prompt and tick “I’ll attach the HR file.” The LLM will use your real employee IDs.</p>
+<p style="margin:0">This page doesn’t save your choices. It opens with the same defaults each time.</p>
+</div>
+</section>
+</div>
+</main>
+</div>
+
+<script src="data/countries.js"></script>
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+/* name, region, currency, pay freq, phone, ID type, fake-ID rule, default cities, postal format */
+const DETAIL={
+US:["United States","AMER","USD","biweekly","+1","SSN","use area numbers 900–999 (never issued)","Denver, New York, Austin, Chicago, San Francisco","5-digit ZIP"],
+GB:["United Kingdom","EMEA","GBP","monthly","+44","National Insurance number","use the QQ prefix (never issued)","London, Manchester","alphanumeric postcode, e.g. SW1A 1AA"],
+CA:["Canada","AMER","CAD","biweekly","+1","SIN","start with 0 (never issued)","Toronto, Vancouver","A1A 1A1"],
+DE:["Germany","EMEA","EUR","monthly","+49","Steuer-ID","start with 0 (real IDs never do)","Berlin, Munich","5 digits"],
+IN:["India","APAC","INR","monthly","+91","PAN","start with ZZ","Bengaluru, Hyderabad","6-digit PIN"],
+MX:["Mexico","LATAM","MXN","semi-monthly","+52","CURP","start with XEXX (generic placeholder)","Mexico City, Monterrey","5 digits"],
+JP:["Japan","APAC","JPY","monthly","+81","My Number","start with 0000","Tokyo","123-4567"],
+AU:["Australia","APAC","AUD","fortnightly","+61","TFN","start with 000","Sydney, Melbourne","4 digits"],
+BR:["Brazil","LATAM","BRL","monthly","+55","CPF","use 000.000.0xx-xx patterns","São Paulo","12345-678"],
+CN:["China","APAC","CNY","monthly","+86","Resident ID","start with 000000","Shanghai, Shenzhen","6 digits"],
+CO:["Colombia","LATAM","COP","semi-monthly","+57","Cédula","start with 000","Bogotá, Medellín","6 digits"],
+FR:["France","EMEA","EUR","monthly","+33","NIR (sécurité sociale)","start with 0 (real ones start with 1 or 2)","Paris, Lyon","5 digits"],
+IE:["Ireland","EMEA","EUR","monthly","+353","PPSN","start with 0000","Dublin, Cork","Eircode, e.g. D02 X285"],
+IL:["Israel","EMEA","ILS","monthly","+972","Teudat Zehut","start with 000","Tel Aviv","7 digits"],
+KR:["South Korea","APAC","KRW","monthly","+82","Resident Registration No.","use 000000-0xxxxxx","Seoul","5 digits"],
+NL:["Netherlands","EMEA","EUR","monthly","+31","BSN","start with 000","Amsterdam","1234 AB"],
+PH:["Philippines","APAC","PHP","semi-monthly","+63","TIN","start with 000","Manila, Cebu","4 digits"],
+PL:["Poland","EMEA","PLN","monthly","+48","PESEL","start with 000","Warsaw, Kraków","12-345"],
+SG:["Singapore","APAC","SGD","monthly","+65","NRIC/FIN","use the X prefix (not issued)","Singapore","6 digits"],
+ES:["Spain","EMEA","EUR","monthly","+34","DNI/NIE","start with 000","Madrid, Barcelona","5 digits"],
+SE:["Sweden","EMEA","SEK","monthly","+46","Personnummer","use birth month 13+ (invalid)","Stockholm","123 45"],
+CH:["Switzerland","EMEA","CHF","monthly","+41","AHV number","use 756.0000.xxxx.xx","Zurich, Geneva","4 digits"],
+AE:["United Arab Emirates","EMEA","AED","monthly","+971","Emirates ID","use 784-0000-…","Dubai","none (P.O. Box)"]};
+const COUNTRIES={};COUNTRY_LIST.split(";").forEach(r=>{const[c,rest]=r.split(":"),[nm,rg,cu,ph]=rest.split("|");COUNTRIES[c]=DETAIL[c]||[nm,rg,cu,"","+"+ph,"","","",""]});
+const SORTED=Object.keys(COUNTRIES).sort((a,b)=>COUNTRIES[a][0].localeCompare(COUNTRIES[b][0]));
+const DEFAULT_ALLOC={US:60,GB:8,CA:8,IN:8,DE:6,MX:5,JP:5};
+const DEPTS=["Engineering","Product","IT","Sales","Marketing","Customer Success","Operations","Finance","People (HR)","Legal"];
+const CC={Engineering:1100,Product:1200,IT:1300,Sales:2100,Marketing:2200,"Customer Success":2300,Operations:3100,Finance:4100,"People (HR)":4200,Legal:4300};
+const CITY_CODE={"bengaluru":"BLR","bangalore":"BLR","munich":"MUC","münchen":"MUC","monterrey":"MTY","tokyo":"TYO","mumbai":"BOM","singapore":"SIN","seoul":"SEL","shanghai":"SHA","shenzhen":"SZX","dublin":"DUB","amsterdam":"AMS","madrid":"MAD","barcelona":"BCN","warsaw":"WAW","kraków":"KRK","krakow":"KRK","stockholm":"STO","zurich":"ZRH","geneva":"GVA","dubai":"DXB","bogotá":"BOG","bogota":"BOG","medellín":"MDE","manila":"MNL","cebu":"CEB","cork":"ORK","lyon":"LYS","sydney":"SYD","melbourne":"MEL","paris":"PAR","new york":"NYC","san francisco":"SFO","los angeles":"LAX","mexico city":"MEX","salt lake city":"SLC","hong kong":"HKG","tel aviv":"TLV","kuala lumpur":"KUL","são paulo":"SAO","sao paulo":"SAO","rio de janeiro":"RIO","buenos aires":"BUE","ho chi minh city":"SGN","las vegas":"LAS","san diego":"SAN","san jose":"SJC","new delhi":"DEL","cape town":"CPT","abu dhabi":"AUH"};
+
+function apportion(n,w){const T=w.reduce((a,b)=>a+b,0);if(T<=0)return w.map(()=>0);const raw=w.map(x=>x*n/T),fl=raw.map(Math.floor);let r=n-fl.reduce((a,b)=>a+b,0);raw.map((x,i)=>[x-fl[i],i]).sort((a,b)=>b[0]-a[0]).slice(0,r).forEach(([,i])=>fl[i]++);return fl}
+function cityCode(city){const k=city.toLowerCase().trim();if(CITY_CODE[k])return CITY_CODE[k];const a=k.normalize("NFD").replace(/[^a-z ]/g,"").trim(),w=a.split(/\s+/);return(w.length>=3?w.map(x=>x[0]).join(""):w[0].slice(0,3)).toUpperCase().padEnd(3,"X")}
+function theName(nm){return(/^(United|Netherlands|Philippines|Czech Republic|Dominican|Bahamas|Gambia|Maldives|Marshall|Solomon|Central African|Comoros|Cayman|British|U\.S\.|Falkland|Faroe|Cook|Northern Mariana|Turks|Caribbean)/.test(nm)?"the ":"")+nm}
+function enhance(){$$('input[type=number]').forEach(i=>{if(i.parentElement.classList.contains("step"))return;const w=document.createElement("span");w.className="step"+(i.classList.contains("num")?"":" full");i.replaceWith(w);w.appendChild(i);const b=document.createElement("span");b.className="step-btns";b.innerHTML='<button type="button" tabindex="-1" aria-label="Increase">▲</button><button type="button" tabindex="-1" aria-label="Decrease">▼</button>';w.appendChild(b);b.children[0].onclick=()=>{i.stepUp();i.dispatchEvent(new Event("input",{bubbles:true}))};b.children[1].onclick=()=>{i.stepDown();i.dispatchEvent(new Event("input",{bubbles:true}))}})}
+function badge(el,t){el.textContent=t+"%";el.className=el.className.replace(/badge-\w+/g,"")+" badge-"+(t===100?"success":"warning")}
+
+/* ---------- reusable country / office widget ---------- */
+function createGeo(root,{counts=true}={}){
+ const g={sel:Object.keys(DEFAULT_ALLOC),alloc:{...DEFAULT_ALLOC},cities:{},n:0};
+ root.innerHTML=`<div class="picker"><button class="btn btn-secondary picker-btn" type="button" data-act="toggle"><span class="pl"></span><span>▾</span></button>
+<div class="pop"><input class="input srch" placeholder="Search countries…"><div class="pop-list"></div><div class="spread" style="margin-top:10px"><span class="hint" style="margin:0">Click outside to close</span><button class="btn btn-ghost" type="button" data-act="clear">Clear all</button></div></div></div>
+<div class="chips"></div>
+<div class="row" style="margin-top:24px"><span class="lbl" style="margin:0">Home country</span><select class="input prim" style="width:240px">${SORTED.map(c=>`<option value="${c}">${esc(COUNTRIES[c][0])}</option>`).join("")}</select><span class="lbl" style="margin:0">gets</span><input class="input num ppct" type="number" min="0" max="100" value="60"><span>%</span><button class="btn btn-secondary" type="button" data-act="split">Split the rest evenly</button><span class="badge tot"></span></div>
+<div class="warn gnote" hidden>Shares add up to <b></b>. The prompt scales them proportionally to 100%${counts?", so the record counts still add up to your total":""}. <button class="btn btn-ghost" type="button" data-act="fix">Scale to 100% now</button></div>
+<div style="overflow-x:auto;margin-top:16px"><table><thead><tr><th>Country</th><th>Share %</th>${counts?"<th>Records</th>":""}<th>Currency</th><th>Offices / cities</th></tr></thead><tbody class="alloc"></tbody></table></div>`;
+ const prim=$(".prim",root);prim.value="US";
+ g.primary=()=>prim.value;
+ g.counts=n=>apportion(n,g.sel.map(c=>+g.alloc[c]||0));
+ g.city=c=>(g.cities[c]??COUNTRIES[c][7]).trim();
+ g.sites=()=>{const used=new Set(),out=[];g.sel.forEach(c=>g.city(c).split(",").map(x=>x.trim()).filter(Boolean).forEach(city=>{let id=`LOC-${c}-${cityCode(city)}`,k=2;while(used.has(id))id=`LOC-${c}-${cityCode(city)}${k++}`;used.add(id);out.push({id,city,cc:c})}));return out};
+ g.total=()=>g.sel.reduce((s,c)=>s+(+g.alloc[c]||0),0);
+ g.pick=()=>{const q=$(".srch",root).value.toLowerCase();$(".pop-list",root).innerHTML=SORTED.filter(c=>!q||COUNTRIES[c][0].toLowerCase().includes(q)||c.toLowerCase()===q).map(c=>`<label class="opt"><input type="checkbox" data-c="${c}" ${g.sel.includes(c)?"checked":""}><span>${esc(COUNTRIES[c][0])} <span class="fname" style="color:var(--gray-500)">${c}</span></span></label>`).join("")};
+ g.refresh=n=>{g.n=n;const t=g.total();badge($(".tot",root),t);$(".gnote",root).hidden=t===100;$(".gnote b",root).textContent=t+"%";if(counts){const k=g.counts(n);$$(".alloc tr",root).forEach((r,i)=>{if(r.children[2]&&k[i]!==undefined)r.children[2].textContent=k[i]})}};
+ g.render=()=>{$(".pl",root).textContent=g.sel.length?`${g.sel.length} countr${g.sel.length>1?"ies":"y"} selected`:"Select countries";
+  $(".chips",root).innerHTML=g.sel.map(c=>`<span class="chip">${esc(COUNTRIES[c][0])}<button type="button" data-rm="${c}" aria-label="Remove">×</button></span>`).join("");
+  $(".alloc",root).innerHTML=g.sel.map(c=>`<tr><td>${esc(COUNTRIES[c][0])} <span class="fname" style="color:var(--gray-500)">${c}</span></td><td><input class="input num" type="number" min="0" max="100" data-a="${c}" value="${g.alloc[c]??0}"></td>${counts?'<td class="m"></td>':""}<td class="m">${COUNTRIES[c][2]}</td><td><input class="input" data-city="${c}" placeholder="Leave blank to let the LLM choose" value="${esc(g.cities[c]??COUNTRIES[c][7])}"></td></tr>`).join("")||`<tr><td colspan="5" class="hint">Choose at least one country.</td></tr>`;
+  enhance();g.refresh(g.n)};
+ g.split=()=>{if(!g.sel.length)return;let p=prim.value;if(!g.sel.includes(p)){p=g.sel[0];prim.value=p}let pp=Math.min(100,Math.max(0,+$(".ppct",root).value||0));if(g.sel.length===1)pp=100;g.alloc={[p]:pp};const rest=g.sel.filter(c=>c!==p),a=apportion(100-pp,rest.map(()=>1));rest.forEach((c,i)=>g.alloc[c]=a[i]);g.render()};
+ root.addEventListener("click",e=>{const a=e.target.closest("[data-act]")?.dataset.act,rm=e.target.dataset.rm;
+  if(a==="toggle"){const p=$(".pop",root);p.classList.toggle("open");if(p.classList.contains("open")){g.pick();$(".srch",root).focus()}}
+  if(a==="clear"){g.sel=[];g.alloc={};g.pick();g.render()}
+  if(a==="split")g.split();
+  if(a==="fix"){const k=apportion(100,g.sel.map(c=>+g.alloc[c]||0));g.sel.forEach((c,i)=>g.alloc[c]=k[i]);g.render()}
+  if(rm){g.sel=g.sel.filter(x=>x!==rm);g.pick();g.split()}
+  if(a||rm)changed()});
+ root.addEventListener("change",e=>{const c=e.target.dataset.c;if(c){if(e.target.checked){if(!g.sel.includes(c))g.sel.push(c)}else g.sel=g.sel.filter(x=>x!==c);g.split()}
+  if(e.target===prim){if(!g.sel.includes(prim.value))g.sel.unshift(prim.value);g.split()}});
+ root.addEventListener("input",e=>{if(e.target.classList.contains("srch"))return g.pick();if(e.target.dataset.a)g.alloc[e.target.dataset.a]=+e.target.value||0;if(e.target.dataset.city)g.cities[e.target.dataset.city]=e.target.value;g.refresh(g.n)});
+ g.render();return g}
+document.addEventListener("click",e=>$$(".pop.open").forEach(p=>{if(!p.parentElement.contains(e.target))p.classList.remove("open")}));
+
+/* ---------- shared company profile ---------- */
+const P={get on(){return $("#useProf").checked},get company(){return $("#pCo").value.trim()||"a fictional company"},get domain(){return $("#pDom").value.trim()||"example.com"},get asof(){return $("#pAsof").value}};
+P.geo=createGeo($("#profGeo"),{counts:false});
+$("#pAsof").value=new Date().toISOString().slice(0,10);
+function renderProfile(){const on=P.on;document.body.classList.toggle("use-profile",on);$("#profBody").hidden=!on;$("#profPanel").classList.toggle("prof-on",on);const b=$("#profBadge");b.textContent=on?"On":"Off";b.className="badge "+(on?"badge-accent":"badge-neutral");
+ $("#siteTbl").innerHTML=P.geo.sites().map(s=>`<tr><td class="m">${s.id}</td><td>${esc(s.city)}</td><td class="m">${s.cc}</td></tr>`).join("")||'<tr><td colspan="3" class="hint">Add offices above.</td></tr>';
+ const n=B.hr?.n()||500;$("#convTbl").innerHTML=`<tr><td class="m">Employee IDs</td><td class="m">EMP-10001 – EMP-${10000+n}</td></tr><tr><td colspan="2" class="hint" style="border:0;padding-top:0">Range follows the HR data employee count.</td></tr>`+DEPTS.map(d=>`<tr><td>${d}</td><td class="m">CC-${CC[d]}</td></tr>`).join("")}
+
+/* ---------- builder engine ---------- */
+const FMT={csv:"a CSV file with a header row (UTF-8, comma-separated, quote any value containing a comma)",xlsx:"an Excel .xlsx workbook with a header row",sql:"PostgreSQL CREATE TABLE and INSERT statements (store postal codes, phone numbers and IDs as text)",json:"a JSON array of objects, one per record, using the field names as keys",md:"a Markdown table with a header row"};
+const FMTT={csv:t=>`one CSV file per table (${t.map(x=>x+".csv").join(", ")}), each with a header row`,xlsx:t=>`one Excel .xlsx workbook with one sheet per table (${t.join(", ")})`,sql:t=>`PostgreSQL CREATE TABLE statements with primary and foreign keys, then INSERT statements, in dependency order (${t.join(", ")}); store postal codes, phone numbers and IDs as text`,json:t=>`one JSON object with an array per table (${t.join(", ")})`,md:t=>`one Markdown table per table (${t.join(", ")})`};
+const COMMON_RULES=[["seed","Make it reproducible","Script uses a fixed random seed so every run produces identical output.",1],["clean","Return only the data / code","No commentary, apologies or placeholder rows like “…”.",1]];
+const B={};
+function createBuilder(cfg){
+ const v=document.createElement("div");v.className="view";v.id="view-"+cfg.id;v.hidden=true;
+ const mixP=(cfg.mixes||[]).map(m=>`<div class="panel"><div class="spread"><h3>${m.title}</h3><span class="badge" data-tot="${m.id}"></span></div><div class="mix">${m.items.map(([k,val])=>`<span>${k}</span><span class="row" style="gap:6px"><input class="input num" type="number" min="0" max="100" data-mix="${m.id}" data-k="${esc(k)}" value="${val}">%</span>`).join("")}</div><div class="warn" data-note="${m.id}" hidden>Shares add up to <b></b>. The prompt scales them to 100%. <button class="btn btn-ghost" type="button" data-fix="${m.id}">Scale to 100% now</button></div></div>`).join("");
+ const chkP=(cfg.checks||[]).map(c=>`<div class="panel"><div class="spread"><h3>${c.title}</h3><span class="badge badge-neutral" data-cc="${c.id}"></span></div><div style="margin-top:8px">${c.items.map(x=>`<label class="opt" style="padding:5px 8px"><input type="checkbox" data-chk="${c.id}" data-v="${esc(x)}" ${!c.on||c.on.includes(x)?"checked":""}><span>${x}</span></label>`).join("")}</div></div>`).join("");
+ const rules=[...cfg.rules,...COMMON_RULES];
+ v.innerHTML=`<div class="eyebrow">Data type</div><h1>${cfg.title}</h1><p class="sub">${cfg.sub}</p>
+<section><div class="sh"><div class="eyebrow">01 — Scope</div><h2>What are we generating?</h2></div><div class="panel">
+<div class="callout profile-only" style="margin-bottom:20px">Using the shared company profile: <b class="psum" style="font-weight:500"></b>. <a href="#home" style="color:var(--gray-700)">Edit on Home</a></div>
+<div class="grid g3">
+<div><label class="lbl">${cfg.countLabel}</label><input class="input cnt" type="number" min="1" value="${cfg.count}"></div>
+<div class="no-profile"><label class="lbl">Fictional company name</label><input class="input co" value="Meridian Works"></div>
+<div class="no-profile"><label class="lbl">Company email domain</label><input class="input dom" value="meridianworks.example"></div>
+<div class="no-profile"><label class="lbl">“Today” for the data</label><input class="input asof" type="date"></div>
+<div><label class="lbl">Output format</label><select class="input fmt"><option value="csv">CSV (opens in Excel / Sheets)</option><option value="xlsx">Excel workbook (.xlsx)</option><option value="sql">SQL (PostgreSQL / Supabase)</option><option value="json">JSON</option><option value="md">Markdown table</option></select></div>
+<div><label class="lbl">How the LLM should produce it (script recommended)</label><select class="input meth"><option value="script">Write a script that generates the data</option><option value="direct">Type out the rows directly</option></select></div>
+</div>
+${cfg.related?`<label class="opt" style="margin-top:16px;padding-left:0"><input type="checkbox" class="rel"><span>Generate as related tables<small>${cfg.related.desc}</small></span></label>`:""}
+<div class="warn mw" hidden></div></div></section>
+<section><div class="sh"><div class="eyebrow">02 — Geography</div><h2>${cfg.geoTitle}</h2></div><div class="panel">
+<div class="profile-only"><p class="hint" style="margin:0 0 12px;font-size:14px">Countries, shares and offices come from the company profile. <a href="#home" style="color:var(--gray-700)">Edit on Home</a></p><div style="overflow-x:auto"><table><thead><tr><th>Country</th><th>Share</th><th>Records</th><th>Sites</th></tr></thead><tbody class="pgeo"></tbody></table></div></div>
+<div class="no-profile geo"></div>${cfg.geoExtra||""}</div></section>
+<section><div class="sh"><div class="eyebrow">03 — Mix</div><h2>${cfg.mixTitle}</h2></div><div class="grid g3">${mixP}${chkP}</div></section>
+<section><div class="sh"><div class="eyebrow">04 — Fields</div><h2>Which columns should each record have?</h2></div>
+<div class="sticky spread"><div class="row"><span class="lbl" style="margin:0">Presets</span><button class="btn btn-secondary" type="button" data-preset="e">Essentials</button><button class="btn btn-secondary" type="button" data-preset="s">Standard</button><button class="btn btn-secondary" type="button" data-preset="all">Everything</button><button class="btn btn-ghost" type="button" data-preset="none">Clear</button></div><span class="badge badge-neutral fcount"></span></div>
+${cfg.groups.map((g,gi)=>`<div class="fgroup" data-grp="${gi}" ${g.mode?`data-mode="${g.mode}"`:""}><div class="fhead"><h3>${g.name}${cfg.related&&g.table?` <span class="tag rel-only" style="color:var(--gray-500)">${g.table==="*"?"every table":g.table+" table"}</span>`:""}</h3><div class="row" style="gap:4px"><span class="badge badge-neutral" data-gc="${gi}"></span><button class="btn btn-ghost" type="button" data-gall="${gi}">All</button><button class="btn btn-ghost" type="button" data-gnone="${gi}">None</button></div></div><div class="fbody">${g.f.map(([n,d,p="",t])=>`<label class="opt"><input type="checkbox" data-f="${n}" data-g="${gi}" data-p="${p}" ${p==="key"?"disabled checked":p.includes("s")?"checked":""}><span><span class="fname">${n}</span>${t?`<span class="tag">${t}</span>`:""}<small>${esc(d)}</small></span></label>`).join("")}</div></div>`).join("")}</section>
+<section><div class="sh"><div class="eyebrow">05 — Rules</div><h2>How realistic should it be?</h2></div><div class="panel"><div class="grid g2">${rules.map(([k,t,d,on])=>`<label class="opt"><input type="checkbox" data-rule="${k}" ${on?"checked":""}><span>${t}<small>${d}</small></span></label>`).join("")}</div>
+<label class="lbl" style="margin-top:20px">Anything else? (optional)</label><textarea class="extra" rows="3" placeholder="${esc(cfg.extraHint)}"></textarea></div></section>
+<section><div class="sh"><div class="eyebrow">06 — Prompt</div><h2>Your prompt</h2></div>
+<div class="spread" style="margin-bottom:12px"><span class="hint pstats" style="margin:0"></span><div class="row"><span class="badge badge-success copied" hidden>Copied</span><button class="btn btn-primary copy" type="button">Copy prompt</button></div></div>
+<textarea class="out" readonly></textarea>
+<div class="callout" style="margin-top:16px">Paste the whole prompt into ChatGPT, Claude, Gemini or another LLM. If you chose a script, ask the LLM to run it for you, or run it yourself with Python 3.</div></section>`;
+ $("#main").appendChild(v);
+ const nav=document.createElement("a");nav.className="nav";nav.href="#"+cfg.id;nav.dataset.nav=cfg.id;nav.textContent=cfg.nav;$("#side").insertBefore(nav,$(".side-foot"));
+ $("#typeCards").insertAdjacentHTML("beforeend",`<div class="panel card"><h3>${cfg.nav}</h3><p>${cfg.card}</p><a class="btn btn-secondary" href="#${cfg.id}">Open ${cfg.nav} →</a></div>`);
+ $(".asof",v).value=new Date().toISOString().slice(0,10);
+ const geo=createGeo($(".geo",v));
+ const b={cfg,v,geo,n:()=>+$(".cnt",v).value||0};
+ const related=()=>!!(cfg.related&&$(".rel",v).checked);
+ const G=()=>P.on?P.geo:geo;
+ const visGroup=gi=>{const m=cfg.groups[gi].mode;return!m||(m==="related")===related()};
+ v.addEventListener("click",e=>{const d=e.target.dataset;
+  if(d.gall!==undefined||d.gnone!==undefined){$$(`[data-g="${d.gall??d.gnone}"]`,v).forEach(x=>{if(!x.disabled)x.checked=d.gall!==undefined});changed()}
+  if(d.preset){$$("[data-f]",v).forEach(x=>{if(x.disabled)return;x.checked=d.preset==="all"?true:d.preset==="none"?false:x.dataset.p.includes(d.preset)});changed()}
+  if(d.fix){const ins=$$(`[data-mix="${d.fix}"]`,v),k=apportion(100,ins.map(x=>+x.value||0));ins.forEach((x,i)=>x.value=k[i]);changed()}
+  if(e.target.classList.contains("copy")){const t=$(".out",v).value;(async()=>{try{await navigator.clipboard.writeText(t)}catch(_){$(".out",v).select();try{document.execCommand("copy")}catch(__){}}const c=$(".copied",v);c.hidden=false;setTimeout(()=>c.hidden=true,1800)})()}});
+ b.update=()=>{
+  const n=b.n(),method=$(".meth",v).value,fmt=$(".fmt",v).value,rel=related(),g=G();
+  const company=P.on?P.company:($(".co",v).value.trim()||"a fictional company"),domain=P.on?P.domain:($(".dom",v).value.trim()||"example.com"),asof=P.on?P.asof:$(".asof",v).value;
+  $$("[data-mode]",v).forEach(el=>el.hidden=!visGroup(+el.dataset.grp));$$(".rel-only",v).forEach(el=>el.hidden=!rel);
+  const mixVals=id=>$$(`[data-mix="${id}"]`,v);
+  (cfg.mixes||[]).forEach(m=>{const t=mixVals(m.id).reduce((s,x)=>s+(+x.value||0),0);badge($(`[data-tot="${m.id}"]`,v),t);const nt=$(`[data-note="${m.id}"]`,v);nt.hidden=t===100;$("b",nt).textContent=t+"%"});
+  (cfg.checks||[]).forEach(c=>{const all=$$(`[data-chk="${c.id}"]`,v);$(`[data-cc="${c.id}"]`,v).textContent=`${all.filter(x=>x.checked).length}/${all.length}`});
+  const fields=[];cfg.groups.forEach((gr,gi)=>{const all=$$(`[data-g="${gi}"]`,v),on=all.filter(x=>x.checked);$(`[data-gc="${gi}"]`,v).textContent=`${on.length}/${all.length}`;if(visGroup(gi))gr.f.forEach(f=>{if($(`[data-f="${f[0]}"]`,v).checked)fields.push({n:f[0],d:f[1],t:gr.table})})});
+  const total=cfg.groups.reduce((s,gr,gi)=>s+(visGroup(gi)?gr.f.length:0),0);$(".fcount",v).textContent=`${fields.length} of ${total} fields`;
+  const R=Object.fromEntries($$("[data-rule]",v).map(x=>[x.dataset.rule,x.checked]));
+  const x={n,rel,R,company,domain,unit:cfg.unit,v,g,profile:P.on,has:f=>fields.some(y=>y.n===f),
+   mix:id=>{const ins=mixVals(id),k=apportion(100,ins.map(y=>+y.value||0));return ins.map((y,i)=>`${y.dataset.k} ${k[i]}%`).filter(t=>!/ 0%$/.test(t)).join(", ")},
+   checked:id=>$$(`[data-chk="${id}"]`,v).filter(y=>y.checked).map(y=>y.dataset.v),hrN:B.hr?B.hr.n():500};
+  x.emp=`EMP-10001 to EMP-${10000+x.hrN}`;
+  geo.refresh(n);
+  const counts=g.counts(n),sites=g.sites();
+  $(".psum",v).textContent=`${P.company} · ${P.domain} · ${g.sel.length} countries`;
+  if(P.on)$(".pgeo",v).innerHTML=g.sel.map((c,i)=>`<tr><td>${esc(COUNTRIES[c][0])}</td><td class="m">${Math.round(counts[i]/(n||1)*1000)/10}%</td><td class="m">${counts[i]}</td><td class="m">${sites.filter(s=>s.cc===c).map(s=>s.id).join(", ")||"LLM chooses"}</td></tr>`).join("");
+  const w=$(".mw",v);if(method==="direct"&&n>100){w.hidden=false;w.textContent=`Most chat models can’t type ${n} rows in one reply. The prompt will ask for batches of 100, so you’ll need to type “continue” about ${Math.ceil(n/100)-1} times. “Write a script” avoids this.`}else w.hidden=true;
+  const D=cfg.lines(x),L=[];
+  const hq=theName(COUNTRIES[g.primary()]?.[0]||"United States");
+  L.push(`You are generating realistic but entirely synthetic ${cfg.noun} for ${company}, a fictional company headquartered in ${hq}. Nothing may describe a real person, building or system.`);
+  const tables=rel?cfg.related.tables.map(t=>t[0]):null;
+  L.push("","## Deliverable");
+  const what=cfg.what(x),fmtTxt=tables?FMTT[fmt](tables):FMT[fmt].replace("a header row",`a header row${fmt==="xlsx"?` (sheet name: ${cfg.table})`:""}`).replace("CREATE TABLE and INSERT statements",`CREATE TABLE and INSERT statements for a table named ${cfg.table}`);
+  if(method==="script")L.push(`Write one self-contained Python 3 script that generates ${what}, and saves them as ${fmtTxt}. Use only the standard library${fmt==="xlsx"?" plus openpyxl":""} (Faker is allowed if you also note \`pip install faker\`).${R.seed?" Use a fixed random seed so every run produces identical output.":""} After the script, show a preview of the first 5 rows${tables?" of each table":""}.`);
+  else{L.push(`Output ${what} as ${fmtTxt}.`);if(n>100)L.push(`Because this is long, output the records in batches of 100. After each batch, stop and wait for me to say "continue". Keep IDs sequential across batches and do not repeat headers.`)}
+  L.push(`Treat ${asof} as today's date.`);
+  if(P.on){L.push("","## Shared company profile",`These conventions are shared with other datasets generated for the same company (HR, facilities, CMDB). Follow them exactly so the files line up.`,`- Company: ${company}; email domain: ${domain}; headquarters: ${hq}.`,`- Site IDs (use exactly these for offices): ${sites.map(s=>`${s.id} = ${s.city}, ${s.cc}`).join("; ")||"none defined"}.`,`- Data center sites, if needed: LOC-<country code>-DC1 (e.g. LOC-US-DC1). Fully remote workers: LOC-<country code>-REMOTE.`,`- Employee IDs: ${x.emp}${cfg.id==="hr"?", assigned sequentially":"; any employee reference must fall in this range"}.`,`- Departments and cost centers: ${DEPTS.map(d=>`${d} CC-${CC[d]}`).join(", ")}.`)}
+  L.push("",`## Countries and ${cfg.unit}`);
+  if(!g.sel.length)L.push(`(No countries selected — use ${hq} only.)`);
+  g.sel.forEach((c,i)=>{const cv=COUNTRIES[c],k=counts[i],pct=n?Math.round(k/n*1000)/10:0,ss=sites.filter(s=>s.cc===c);
+   L.push(`- ${cv[0]} (${c}, ${cv[1]}): exactly ${k} ${cfg.unit} (${pct}%). ${ss.length?`Office sites: ${ss.map(s=>`${s.id} (${s.city})`).join(", ")}.`:`Pick 1–2 realistic office cities (main business hubs) and give them IDs LOC-${c}-<3-letter code>.`} ${cfg.countryLine(cv,c,x)}`.trim())});
+  if(D.geo)D.geo.forEach(l=>L.push(l));
+  if(D.mix&&D.mix.length){L.push("",`## ${cfg.mixTitle.replace(/\?$/,"")}`);D.mix.forEach(l=>L.push(`- ${l}`))}
+  if(tables){L.push("","## Tables and fields","Use these exact table and field names, in this order. Key fields are required.");
+   cfg.related.tables.forEach(([t,pk,fks,desc])=>{const fs=[{n:pk,d:"Primary key"}];fks.forEach(([f,ref])=>fs.push({n:f,d:`Foreign key → ${ref}`}));fields.filter(f=>f.t===t||f.t==="*").forEach(f=>{if(!fs.some(y=>y.n===f.n))fs.push(f)});L.push("",`### ${t} (${desc(x)})`);fs.forEach((f,i)=>L.push(`${i+1}. ${f.n} — ${f.d}`))})}
+  else{L.push("","## Fields",`Include exactly these ${fields.length} fields, in this order, using these exact names:`);fields.forEach((f,i)=>L.push(`${i+1}. ${f.n} — ${f.d}${f.n.endsWith("email")&&f.n.startsWith("work")?` (domain: ${domain})`:""}`))}
+  L.push(`Leave a field blank (empty, not "N/A") when it does not apply.`);
+  const RL=[...D.rules];if(R.clean)RL.push(method==="script"?"Return only the script and the preview; no extra commentary.":"Return only the data; no commentary and no placeholder rows such as \"...\".");
+  if(RL.length){L.push("","## Rules");RL.forEach(r=>L.push(`- ${r}`))}
+  const ex=$(".extra",v).value.trim();if(ex)L.push("","## Additional instructions",ex);
+  L.push("","## Before you finish",`Check that: ${[`there are exactly ${n} ${cfg.unit}`,"every listed field is present in order","country counts match the targets","IDs are unique",...(D.checks||[])].join("; ")}.`);
+  const out=L.join("\n");$(".out",v).value=out;$(".pstats",v).textContent=`${out.split(/\s+/).length.toLocaleString()} words · ${fields.length} fields · ${g.sel.length} countries`;
+ };
+ B[cfg.id]=b;return b}
+
+/* ---------- routing + global updates ---------- */
+let raf=0;function changed(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderProfile();Object.values(B).forEach(b=>b.update())})}
+document.addEventListener("input",changed);document.addEventListener("change",changed);
+function route(){const id=(location.hash||"#home").slice(1),ok=id==="home"||B[id];$$(".view").forEach(v=>v.hidden=v.id!=="view-"+(ok?id:"home"));$$(".nav").forEach(a=>a.classList.toggle("active",a.dataset.nav===(ok?id:"home")));window.scrollTo(0,0)}
+window.addEventListener("hashchange",route);
+</script>
+<script src="types/hr.js"></script>
+<script src="types/facilities.js"></script>
+<script src="types/cmdb.js"></script>
+<script>
+$("#side").insertAdjacentHTML("beforeend",'<div class="side-foot"><span class="eyebrow">Company profile</span><span id="profBadge" class="badge badge-neutral">Off</span></div>');
+[HR,FAC,CMDB].forEach(createBuilder);enhance();renderProfile();Object.values(B).forEach(b=>b.update());route();
+</script>
+</body>
+</html>
