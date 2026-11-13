@@ -389,12 +389,13 @@ window.addEventListener("hashchange",route);
 <script src="gen/common.js"></script>
 <script src="gen/hr.js"></script>
 <script src="gen/facilities.js"></script>
+<script src="gen/cmdb.js"></script>
 <script src="types/hr.js"></script>
 <script src="types/facilities.js"></script>
 <script src="types/cmdb.js"></script>
 <script>
 $("#side").insertAdjacentHTML("beforeend",'<div class="side-foot"><span class="eyebrow">Company profile</span><span id="profBadge" class="badge badge-neutral">Off</span></div>');
-HR.gen=HR_GEN;FAC.gen=FAC_GEN;
+HR.gen=HR_GEN;FAC.gen=FAC_GEN;CMDB.gen=CMDB_GEN;
 $("#pmClose").onclick=closePrompt;$("#pm").addEventListener("mousedown",e=>{if(e.target.id==="pm")closePrompt()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#pm").hidden)closePrompt()});
 $("#pmCopy").onclick=async()=>{const t=$("#pmText").value;try{await navigator.clipboard.writeText(t)}catch(_){$("#pmText").select();try{document.execCommand("copy")}catch(__){}}

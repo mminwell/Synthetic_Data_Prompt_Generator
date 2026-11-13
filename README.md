@@ -14,11 +14,13 @@ Generation is seeded: the same settings and seed always produce the same data. N
 
 Facilities assigns desks and offices to employees produced by the HR page's current settings and seed, so the two files line up. With **Generate as related tables** ticked, downloads contain linked `sites`, `buildings`, `floors` and `spaces` tables (CSV as a .zip, Excel as one sheet per table, SQL with foreign keys).
 
+CMDB owners are HR employees, and on-premises gear uses the same office and data-center site IDs (`LOC-<country>-DC1`) as Facilities. Relationships always point down the stack (business service → application → database / load balancer / PaaS → VM → physical server → storage / network), so there are no cycles. Each CI has up to four NIC IP addresses (`ip_address_nic_1`–`ip_address_nic_4`), all in private ranges and unique.
+
 | Data type | In-browser generator | Prompt |
 |---|---|---|
 | HR | Yes | Yes |
 | Facilities | Yes | Yes |
-| CMDB | Coming next | Yes |
+| CMDB | Yes | Yes |
 
 ## Project structure
 
@@ -29,6 +31,7 @@ types/*.js            One file per data type: fields, mixes, rules, prompt text
 gen/common.js         Generator helpers: seeded random numbers, names, addresses, phones, IDs, pay, file formats
 gen/hr.js             HR generator
 gen/facilities.js     Facilities generator (sites, buildings, floors, spaces); assigns desks to HR employees
+gen/cmdb.js           CMDB generator (configuration items + relationships); owners from HR, sites shared with Facilities
 vendor/               Bundled libraries, loaded only when needed (see vendor/README.md)
 ```
 
