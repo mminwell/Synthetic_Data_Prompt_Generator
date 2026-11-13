@@ -1,0 +1,1 @@
+(window.FakerLocales=window.FakerLocales||{})["ta_IN"]={"metadata":{"title":"Tamil (India)","code":"ta_IN","language":"ta","country":"IN","endonym":"தமிழ் (இந்தியா)","dir":"ltr","script":"Taml"}};
