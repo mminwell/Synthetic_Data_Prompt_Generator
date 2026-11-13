@@ -12,10 +12,12 @@ An optional **shared company profile** (company name, email domain, countries, o
 
 Generation is seeded: the same settings and seed always produce the same data. Nothing leaves the browser.
 
+Facilities assigns desks and offices to employees produced by the HR page's current settings and seed, so the two files line up. With **Generate as related tables** ticked, downloads contain linked `sites`, `buildings`, `floors` and `spaces` tables (CSV as a .zip, Excel as one sheet per table, SQL with foreign keys).
+
 | Data type | In-browser generator | Prompt |
 |---|---|---|
 | HR | Yes | Yes |
-| Facilities | Coming next | Yes |
+| Facilities | Yes | Yes |
 | CMDB | Coming next | Yes |
 
 ## Project structure
@@ -26,6 +28,7 @@ data/countries.js     Every country/territory: name, region, currency, phone cod
 types/*.js            One file per data type: fields, mixes, rules, prompt text
 gen/common.js         Generator helpers: seeded random numbers, names, addresses, phones, IDs, pay, file formats
 gen/hr.js             HR generator
+gen/facilities.js     Facilities generator (sites, buildings, floors, spaces); assigns desks to HR employees
 vendor/               Bundled libraries, loaded only when needed (see vendor/README.md)
 ```
 

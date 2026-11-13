@@ -1,5 +1,8 @@
 /* ================= FACILITIES ================= */
-const FAC={id:"facilities",nav:"Facilities data",title:"Facilities data",noun:"facilities and real-estate test data",unit:"spaces",table:"spaces",
+const FAC={id:"facilities",nav:"Facilities data",title:"Facilities data",noun:"facilities and real-estate test data",unit:"spaces",table:"spaces",pk:"space_id",statKeys:["country_code","space_type","occupancy_status"],
+extra:({v,mix,chk})=>({spaceMix:mix("space"),occMix:mix("occ"),siteTypes:chk("stype"),area:$(".area",v).value,bps:$(".bps",v).value,
+ depts:B.hr?$$('[data-chk="dept"]',B.hr.v).filter(x=>x.checked).map(x=>x.dataset.v):DEPTS,hr:B.hr&&B.hr.ctx?B.hr.settings():null}),
+
 sub:"Sites, buildings, floors and spaces: desks, offices and meeting rooms, with leases, capacity, occupancy and assignments.",
 card:"Sites, buildings, floors and individual spaces with leases, areas, capacity, occupancy and desk assignments.",
 countLabel:"Number of spaces (desks, rooms…)",count:300,geoTitle:"Where are the sites?",mixTitle:"What kinds of space?",

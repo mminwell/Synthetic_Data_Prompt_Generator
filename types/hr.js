@@ -1,5 +1,7 @@
 /* ================= HR ================= */
-const HR={id:"hr",nav:"HR data",title:"HR data",noun:"HR employee test data",unit:"employees",table:"employees",
+const HR={id:"hr",nav:"HR data",title:"HR data",noun:"HR employee test data",unit:"employees",table:"employees",pk:"employee_id",statKeys:["work_country_code","employment_status"],
+extra:({v,mix,chk})=>({remotePct:+($(".remote",v)?.value||0),status:mix("status"),types:mix("type"),depts:chk("dept")}),
+
 sub:"Employee records: identity, job and manager, location, pay in local currency, time off, compliance and more.",
 card:"Employees with jobs, a real org chart, offices, pay in local currency, leave, compliance and emergency contacts.",
 countLabel:"Number of employees",count:500,geoTitle:"What countries do you want to do it for?",mixTitle:"Who works there?",

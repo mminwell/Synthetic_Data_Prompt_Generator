@@ -303,7 +303,8 @@ ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-brow
   if(e.target.closest(".dice")){$(".seed",v).value=1+Math.floor(Math.random()*99999);changed()}
   if(e.target.closest(".showprompt"))openPrompt(b);
   if(e.target.closest(".gen"))b.generate();
-  const dl=e.target.closest("[data-dl]");if(dl)b.download(dl.dataset.dl)});
+  const dl=e.target.closest("[data-dl]");if(dl)b.download(dl.dataset.dl);
+  const tb=e.target.closest("[data-tab]");if(tb){b.tab=tb.dataset.tab;renderPreview(b)}});
  b.update=()=>{
   const n=b.n(),method=$("#pmMethod").value,fmt=$(".fmt",v).value,rel=related(),g=G();
   const company=P.on?P.company:($(".co",v).value.trim()||"a fictional company"),domain=P.on?P.domain:($(".dom",v).value.trim()||"example.com"),asof=P.on?P.asof:$(".asof",v).value;
@@ -346,30 +347,32 @@ ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-brow
   if(RL.length){L.push("","## Rules");RL.forEach(r=>L.push(`- ${r}`))}
   const ex=$(".extra",v).value.trim();if(ex)L.push("","## Additional instructions",ex);
   L.push("","## Before you finish",`Check that: ${[`there are exactly ${n} ${cfg.unit}`,"every listed field is present in order","country counts match the targets","IDs are unique",...(D.checks||[])].join("; ")}.`);
-  const out=L.join("\n");b.prompt=out;b.promptStats=`${out.split(/\s+/).length.toLocaleString()} words · ${fields.length} fields · ${g.sel.length} countries`;b.fields=fields.map(f=>f.n);b.ctx={n,fmt,company,domain,asof,g,counts,sites};if(MODAL.b===b)renderModal();
+  const out=L.join("\n");b.prompt=out;b.promptStats=`${out.split(/\s+/).length.toLocaleString()} words · ${fields.length} fields · ${g.sel.length} countries`;b.fields=fields.map(f=>f.n);b.layout=rel?cfg.related.tables.map(([t,pk,fks])=>{const cols=[pk,...fks.map(f=>f[0])];fields.filter(f=>f.t===t||f.t==="*").forEach(f=>{if(!cols.includes(f.n))cols.push(f.n)});return{name:t,pk,fks,cols}}):[{name:cfg.table,pk:cfg.pk||null,fks:[],cols:fields.map(f=>f.n)}];b.ctx={n,fmt,company,domain,asof,g,counts,sites};if(MODAL.b===b)renderModal();if(b.result)renderPreview(b);
   if(b.result&&cfg.gen){const stale=b.sig()!==b.result.sig;$(".gstat",v).textContent=stale?"Settings changed. Generate again to update the data.":b.result.note;$(".gstat",v).style.color=stale?"var(--warning-ink)":""}
  };
  const mixArr=id=>$$(`[data-mix="${id}"]`,v).map(x=>[x.dataset.k,+x.value||0]);
  const chk=id=>$$(`[data-chk="${id}"]`,v).filter(x=>x.checked).map(x=>x.dataset.v);
- b.settings=()=>{const c=b.ctx;return{n:c.n,seed:+$(".seed",v).value||1,asof:c.asof,company:c.company==="a fictional company"?"Meridian Works":c.company,domain:c.domain,primary:c.g.primary(),
-  countries:c.g.sel.map((cc,i)=>({cc,count:c.counts[i],sites:c.sites.filter(s=>s.cc===cc)})).filter(x=>x.count>0),remotePct:+($(".remote",v)?.value||0),
-  status:mixArr("status"),types:mixArr("type"),depts:chk("dept")}};
+ b.settings=()=>{const c=b.ctx;return Object.assign({n:c.n,seed:+$(".seed",v).value||1,asof:c.asof,company:c.company==="a fictional company"?"Meridian Works":c.company,domain:c.domain,primary:c.g.primary(),
+  countries:c.g.sel.map((cc,i)=>({cc,count:c.counts[i],sites:c.sites.filter(s=>s.cc===cc)})).filter(x=>x.count>0)},cfg.extra?cfg.extra({v,mix:mixArr,chk}):{})};
  b.sig=()=>JSON.stringify(b.settings());
  b.generate=async()=>{const btn=$(".gen",v),er=$(".gerr",v),S=b.settings();er.hidden=true;
   if(!S.countries.length){er.hidden=false;er.textContent="Choose at least one country first.";return}
   if(S.n<1||S.n>50000){er.hidden=false;er.textContent="Pick between 1 and 50,000 records.";return}
   btn.disabled=true;btn.textContent="Generating…";$(".gstat",v).textContent="";
-  try{const t0=performance.now(),res=await cfg.gen.generate(S);res.sig=JSON.stringify(S);res.note=`${res.rows.length.toLocaleString()} records in ${((performance.now()-t0)/1000).toFixed(1)}s · seed ${S.seed}`;b.result=res;renderPreview(b);changed()}
+  try{const t0=performance.now(),res=await cfg.gen.generate(S);res.sig=JSON.stringify(S);res.note=`${res.rows.length.toLocaleString()} ${cfg.unit} in ${((performance.now()-t0)/1000).toFixed(1)}s · seed ${S.seed}`;b.result=res;renderPreview(b);changed()}
   catch(err){er.hidden=false;er.textContent="Something went wrong: "+err.message;console.error(err)}
   finally{btn.disabled=false;btn.textContent="Generate data"}};
- b.download=fmt=>{const r=b.result;if(!r)return;const cols=b.fields.length?b.fields:Object.keys(r.rows[0]);GEN.save(fmt||b.ctx.fmt,`${r.table}_${r.rows.length}_seed${JSON.parse(r.sig).seed}`,r.table,cols,r.rows,r.pk).catch(err=>{const er=$(".gerr",v);er.hidden=false;er.textContent="Download failed: "+err.message})};
+ b.tablesOut=()=>{const r=b.result;return b.layout.map(L=>({name:L.name,pk:L.pk,fks:L.fks,cols:L.cols.length?L.cols:Object.keys((r.tables?r.tables[L.name]:r.rows)[0]||{}),rows:b.layout.length>1?r.tables[L.name]:r.rows}))};
+ b.download=fmt=>{const r=b.result;if(!r)return;const t=b.tablesOut();GEN.saveTables(fmt||b.ctx.fmt,t.length>1?`${cfg.id}_${r.rows.length}_seed${JSON.parse(r.sig).seed}`:`${t[0].name}_${t[0].rows.length}_seed${JSON.parse(r.sig).seed}`,t).catch(err=>{const er=$(".gerr",v);er.hidden=false;er.textContent="Download failed: "+err.message})};
  B[cfg.id]=b;return b}
-function renderPreview(b){const v=b.v,r=b.result,cols=b.fields.length?b.fields:Object.keys(r.rows[0]);$(".gout",v).hidden=false;
- const cnt=k=>{const o={};r.rows.forEach(x=>o[x[k]]=(o[x[k]]||0)+1);return Object.entries(o).sort((a,b)=>b[1]-a[1])};
- $(".stats",v).innerHTML=`<span class="badge badge-success">${r.rows.length.toLocaleString()} rows</span>`+["work_country_code","employment_status"].filter(k=>k in r.rows[0]).map(k=>cnt(k).map(([a,n])=>`<span class="badge badge-neutral">${esc(a)} ${n}</span>`).join("")).join("");
+function renderPreview(b){const v=b.v,r=b.result;if(!r)return;const T=b.tablesOut();$(".gout",v).hidden=false;
+ if(!T.some(t=>t.name===b.tab))b.tab=T[T.length-1].name;const t=T.find(x=>x.name===b.tab),rows=t.rows,cols=t.cols;
+ const cnt=k=>{const o={};rows.forEach(x=>o[x[k]]=(o[x[k]]||0)+1);return Object.entries(o).sort((a,b)=>b[1]-a[1])};
+ $(".stats",v).innerHTML=(T.length>1?T.map(x=>`<button type="button" class="btn ${x.name===b.tab?"btn-secondary":"btn-ghost"}" data-tab="${x.name}" style="height:30px">${x.name} <span class="badge badge-neutral" style="margin-left:4px">${x.rows.length.toLocaleString()}</span></button>`).join(""):`<span class="badge badge-success">${rows.length.toLocaleString()} rows</span>`)
+  +(b.cfg.statKeys||[]).filter(k=>rows[0]&&k in rows[0]).map(k=>cnt(k).slice(0,10).map(([a,n])=>`<span class="badge badge-neutral">${esc(a||"—")} ${n}</span>`).join("")).join("");
  $(".preview thead",v).innerHTML=`<tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr>`;
- $(".preview tbody",v).innerHTML=r.rows.slice(0,50).map(x=>`<tr>${cols.map(c=>`<td>${esc(x[c])}</td>`).join("")}</tr>`).join("");
- $(".pvn",v).textContent=`Showing the first ${Math.min(50,r.rows.length)} of ${r.rows.length.toLocaleString()} rows. The download includes every row, with the fields ticked above in that order.`}
+ $(".preview tbody",v).innerHTML=rows.slice(0,50).map(x=>`<tr>${cols.map(c=>`<td>${esc(x[c])}</td>`).join("")}</tr>`).join("");
+ $(".pvn",v).textContent=`Showing the first ${Math.min(50,rows.length)} of ${rows.length.toLocaleString()} rows${T.length>1?` in ${t.name}`:""}. Downloads include every row, with the fields ticked above in that order${T.length>1?"; CSV downloads as a .zip with one file per table":""}.${r.extraNote?" "+r.extraNote:""}`}
 /* ---------- prompt pop-up ---------- */
 const MODAL={b:null};
 function renderModal(){const b=MODAL.b;if(!b)return;$("#pmType").textContent=b.cfg.title;$("#pmText").value=b.prompt;$("#pmStats").textContent=b.promptStats;
@@ -385,12 +388,13 @@ window.addEventListener("hashchange",route);
 </script>
 <script src="gen/common.js"></script>
 <script src="gen/hr.js"></script>
+<script src="gen/facilities.js"></script>
 <script src="types/hr.js"></script>
 <script src="types/facilities.js"></script>
 <script src="types/cmdb.js"></script>
 <script>
 $("#side").insertAdjacentHTML("beforeend",'<div class="side-foot"><span class="eyebrow">Company profile</span><span id="profBadge" class="badge badge-neutral">Off</span></div>');
-HR.gen=HR_GEN;
+HR.gen=HR_GEN;FAC.gen=FAC_GEN;
 $("#pmClose").onclick=closePrompt;$("#pm").addEventListener("mousedown",e=>{if(e.target.id==="pm")closePrompt()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#pm").hidden)closePrompt()});
 $("#pmCopy").onclick=async()=>{const t=$("#pmText").value;try{await navigator.clipboard.writeText(t)}catch(_){$("#pmText").select();try{document.execCommand("copy")}catch(__){}}

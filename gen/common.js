@@ -248,3 +248,40 @@ GEN.save = async (fmt, base, table, cols, rows, pk) => {
     return GEN.download(`${base}.xlsx`, new Blob([XLSX.write(wb, { bookType: "xlsx", type: "array" })], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
   }
 };
+
+/* ---------- several tables at once ---------- */
+GEN.zip = files => {   /* store-only ZIP: [{name, data(string)}] -> Blob */
+  const enc = new TextEncoder(), T = GEN._crcT || (GEN._crcT = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; }));
+  const crc = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = T[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const parts = [], central = []; let off = 0;
+  const u16 = v => [v & 255, v >>> 8 & 255], u32 = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
+  for (const f of files) {
+    const name = enc.encode(f.name), data = enc.encode(f.data), c = crc(data);
+    const head = [...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(c), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)];
+    parts.push(new Uint8Array([0x50, 0x4B, 3, 4, ...head]), name, data);
+    central.push(new Uint8Array([0x50, 0x4B, 1, 2, ...u16(20), ...head, ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), name);
+    off += 30 + name.length + data.length;
+  }
+  const cdSize = central.reduce((s, p) => s + p.length, 0);
+  return new Blob([...parts, ...central, new Uint8Array([0x50, 0x4B, 5, 6, 0, 0, 0, 0, ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(off), 0, 0])], { type: "application/zip" });
+};
+GEN.saveTables = async (fmt, base, tables) => {
+  if (tables.length === 1) { const t = tables[0]; return GEN.save(fmt, base, t.name, t.cols, t.rows, t.pk); }
+  if (fmt === "csv") return GEN.download(`${base}.zip`, GEN.zip(tables.map(t => ({ name: `${t.name}.csv`, data: GEN.toCSV(t.cols, t.rows) }))));
+  if (fmt === "json") return GEN.download(`${base}.json`, `{\n${tables.map(t => `"${t.name}": ${GEN.toJSON(t.cols, t.rows)}`).join(",\n")}\n}`, "application/json");
+  if (fmt === "md") return GEN.download(`${base}.md`, tables.map(t => `## ${t.name}\n\n${GEN.toMD(t.cols, t.rows)}`).join("\n"), "text/markdown");
+  if (fmt === "sql") {
+    const sql = tables.map(t => {
+      let s = GEN.toSQL(t.name, t.cols, t.rows, t.pk);
+      (t.fks || []).forEach(([col, ref]) => { const [rt, rc] = ref.split("."); s = s.replace(new RegExp(`(\\n  ${col} [a-z]+)`), `$1 REFERENCES ${rt}(${rc})`); });
+      return s;
+    }).join("\n");
+    return GEN.download(`${base}.sql`, sql, "application/sql");
+  }
+  if (fmt === "xlsx") {
+    await GEN.load("vendor/xlsx.mini.min.js");
+    const wb = XLSX.utils.book_new();
+    tables.forEach(t => { const ws = XLSX.utils.aoa_to_sheet([t.cols, ...t.rows.map(r => t.cols.map(c => r[c] === "" ? null : r[c]))]); ws["!cols"] = t.cols.map(c => ({ wch: Math.min(40, Math.max(c.length, ...t.rows.slice(0, 200).map(r => String(r[c] ?? "").length)) + 2) })); XLSX.utils.book_append_sheet(wb, ws, t.name.slice(0, 31)); });
+    return GEN.download(`${base}.xlsx`, new Blob([XLSX.write(wb, { bookType: "xlsx", type: "array" })], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
+  }
+};
