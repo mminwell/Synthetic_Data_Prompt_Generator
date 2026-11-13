@@ -1,4 +1,4 @@
-# Synthetic Data Prompt Generator
+# Synthetic Data Generator
 
 A static web page that generates realistic, entirely fictional test data right in the browser. Pick the fields, countries and mix you want, click **Generate data**, preview it and download CSV, Excel, SQL (PostgreSQL), JSON or Markdown. **Generate prompt** opens a ready-made prompt for any LLM (ChatGPT, Claude, Gemini, …) instead.
 
