@@ -267,7 +267,7 @@ function createBuilder(cfg){
 <div class="no-profile"><label class="lbl">Fictional company name</label><input class="input co" value="Meridian Works"></div>
 <div class="no-profile"><label class="lbl">Company email domain</label><input class="input dom" value="meridianworks.example"></div>
 <div class="no-profile"><label class="lbl">“Today” for the data</label><input class="input asof" type="date"></div>
-<div><label class="lbl">Output format</label><select class="input fmt"><option value="csv">CSV (opens in Excel / Sheets)</option><option value="xlsx">Excel workbook (.xlsx)</option><option value="sql">SQL (PostgreSQL / Supabase)</option><option value="json">JSON</option><option value="md">Markdown table</option></select></div>
+<div><label class="lbl">Output format (for the prompt)</label><select class="input fmt"><option value="csv">CSV (opens in Excel / Sheets)</option><option value="xlsx">Excel workbook (.xlsx)</option><option value="sql">SQL (PostgreSQL / Supabase)</option><option value="json">JSON</option><option value="md">Markdown table</option></select></div>
 <div><label class="lbl">Random seed</label><div class="row" style="gap:6px;flex-wrap:nowrap"><input class="input seed" type="number" min="1" value="2026"><button class="icon-btn dice" type="button" title="New random seed" aria-label="New random seed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor"/></svg></button></div><div class="hint">Same settings + seed = same data.</div></div>
 </div>
 ${cfg.related?`<label class="opt" style="margin-top:16px;padding-left:0"><input type="checkbox" class="rel"><span>Generate as related tables<small>${cfg.related.desc}</small></span></label>`:""}
@@ -285,7 +285,7 @@ ${cfg.gen?'<p class="hint" style="margin:12px 0 0">The built-in generator always
 <div class="panel"><div class="gen-bar">${cfg.gen?'<button class="btn btn-primary gen" type="button">Generate data</button>':'<button class="btn btn-secondary" type="button" disabled style="opacity:.55;cursor:default">Generate data</button><span class="badge badge-neutral">Generator coming soon</span>'}<button class="btn btn-secondary showprompt" type="button">Generate prompt</button><span class="hint gstat" style="margin:0"></span></div>
 ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-browser generator for this data type is next on the list. For now, Generate prompt gives you a prompt to use with any LLM.</p>'}
 <div class="gerr err" hidden></div>
-<div class="gout" hidden><div class="spread" style="margin-top:20px"><div class="stats"></div><button class="btn btn-secondary dl" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg><span class="dll">Download</span></button></div>
+<div class="gout" hidden><div class="spread" style="margin-top:20px"><div class="stats"></div><div class="row" style="gap:8px"><span class="lbl" style="margin:0">Download</span>${[["csv","CSV"],["xlsx","Excel"],["sql","SQL"],["json","JSON"],["md","Markdown"]].map(([f,l])=>`<button class="btn btn-secondary dl" type="button" data-dl="${f}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>${l}</button>`).join("")}</div></div>
 <div class="preview"><table><thead></thead><tbody></tbody></table></div><div class="hint pvn"></div></div></div></section>`;
  $("#main").appendChild(v);
  const nav=document.createElement("a");nav.className="nav";nav.href="#"+cfg.id;nav.dataset.nav=cfg.id;nav.textContent=cfg.nav;$("#side").insertBefore(nav,$(".side-foot"));
@@ -303,7 +303,7 @@ ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-brow
   if(e.target.closest(".dice")){$(".seed",v).value=1+Math.floor(Math.random()*99999);changed()}
   if(e.target.closest(".showprompt"))openPrompt(b);
   if(e.target.closest(".gen"))b.generate();
-  if(e.target.closest(".dl"))b.download()});
+  const dl=e.target.closest("[data-dl]");if(dl)b.download(dl.dataset.dl)});
  b.update=()=>{
   const n=b.n(),method=$("#pmMethod").value,fmt=$(".fmt",v).value,rel=related(),g=G();
   const company=P.on?P.company:($(".co",v).value.trim()||"a fictional company"),domain=P.on?P.domain:($(".dom",v).value.trim()||"example.com"),asof=P.on?P.asof:$(".asof",v).value;
@@ -347,7 +347,6 @@ ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-brow
   const ex=$(".extra",v).value.trim();if(ex)L.push("","## Additional instructions",ex);
   L.push("","## Before you finish",`Check that: ${[`there are exactly ${n} ${cfg.unit}`,"every listed field is present in order","country counts match the targets","IDs are unique",...(D.checks||[])].join("; ")}.`);
   const out=L.join("\n");b.prompt=out;b.promptStats=`${out.split(/\s+/).length.toLocaleString()} words · ${fields.length} fields · ${g.sel.length} countries`;b.fields=fields.map(f=>f.n);b.ctx={n,fmt,company,domain,asof,g,counts,sites};if(MODAL.b===b)renderModal();
-  $(".dll",v)&&($(".dll",v).textContent=`Download ${{csv:"CSV",xlsx:"Excel",sql:"SQL",json:"JSON",md:"Markdown"}[fmt]}`);
   if(b.result&&cfg.gen){const stale=b.sig()!==b.result.sig;$(".gstat",v).textContent=stale?"Settings changed. Generate again to update the data.":b.result.note;$(".gstat",v).style.color=stale?"var(--warning-ink)":""}
  };
  const mixArr=id=>$$(`[data-mix="${id}"]`,v).map(x=>[x.dataset.k,+x.value||0]);
@@ -363,7 +362,7 @@ ${cfg.gen?'':'<p class="hint" style="font-size:14px;margin:12px 0 0">The in-brow
   try{const t0=performance.now(),res=await cfg.gen.generate(S);res.sig=JSON.stringify(S);res.note=`${res.rows.length.toLocaleString()} records in ${((performance.now()-t0)/1000).toFixed(1)}s · seed ${S.seed}`;b.result=res;renderPreview(b);changed()}
   catch(err){er.hidden=false;er.textContent="Something went wrong: "+err.message;console.error(err)}
   finally{btn.disabled=false;btn.textContent="Generate data"}};
- b.download=()=>{const r=b.result;if(!r)return;const cols=b.fields.length?b.fields:Object.keys(r.rows[0]);GEN.save(b.ctx.fmt,`${r.table}_${r.rows.length}_seed${JSON.parse(r.sig).seed}`,r.table,cols,r.rows,r.pk).catch(err=>{const er=$(".gerr",v);er.hidden=false;er.textContent="Download failed: "+err.message})};
+ b.download=fmt=>{const r=b.result;if(!r)return;const cols=b.fields.length?b.fields:Object.keys(r.rows[0]);GEN.save(fmt||b.ctx.fmt,`${r.table}_${r.rows.length}_seed${JSON.parse(r.sig).seed}`,r.table,cols,r.rows,r.pk).catch(err=>{const er=$(".gerr",v);er.hidden=false;er.textContent="Download failed: "+err.message})};
  B[cfg.id]=b;return b}
 function renderPreview(b){const v=b.v,r=b.result,cols=b.fields.length?b.fields:Object.keys(r.rows[0]);$(".gout",v).hidden=false;
  const cnt=k=>{const o={};r.rows.forEach(x=>o[x[k]]=(o[x[k]]||0)+1);return Object.entries(o).sort((a,b)=>b[1]-a[1])};

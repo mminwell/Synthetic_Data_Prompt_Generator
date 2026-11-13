@@ -119,7 +119,8 @@ const HR_GEN = (() => {
     const used = new Set(), rows = [];
     for (const e of emps) {
       const cc = e.cc, m = GEN.meta(cc), f = fk[cc], loc = m.locale || "en";
-      const gender = R.w([["Female", 47], ["Male", 49], ["Non-binary", 1.5], ["Prefer not to say", 2.5]]);
+      let gender = R.w([["Female", 47], ["Male", 49], ["Non-binary", 1.5], ["Prefer not to say", 2.5]]);
+      if (e.level === "E1" && cc === "US") gender = "Female";
       const nm = e.level === "E1" && cc === "US" ? { first: "Dana", middle: "Marie", last: "Whitfield", local: "" } : GEN.name(R, cc, loc, f, gender === "Female" || (gender !== "Male" && R.chance(0.5)));
       const preferred = GEN.NICK[nm.first] && R.chance(0.5) ? GEN.NICK[nm.first] : nm.first;
       const minAge = { IC0: 19, IC1: 22, IC2: 24, IC3: 27, IC4: 30, IC5: 33, M1: 29, M2: 32, M3: 35, M4: 38, E1: 45 }[e.level];
