@@ -107,16 +107,16 @@ body:not(.use-profile) .profile-only{display:none!important}body.use-profile .no
 <p class="sub">Generate realistic, entirely fictional test data right in your browser, with exactly the fields, countries and mix you choose. Or get a ready-made prompt to use with any LLM.</p>
 
 <section>
-<div class="sh"><div class="eyebrow">01 — How it works</div><h2>Four steps</h2></div>
-<div class="grid g4">
-<div class="panel"><div class="stepn">01</div><h3>Set up a profile</h3><p class="hint" style="font-size:14px">Optional. Share one company, set of sites and ID conventions across every dataset so they line up.</p></div>
-<div class="panel"><div class="stepn">02</div><h3>Pick a data type</h3><p class="hint" style="font-size:14px">Choose HR, Facilities or CMDB from the sidebar.</p></div>
-<div class="panel"><div class="stepn">03</div><h3>Choose options</h3><p class="hint" style="font-size:14px">Tick fields, set countries and mixes, and pick an output format.</p></div>
-<div class="panel"><div class="stepn">04</div><h3>Generate</h3><p class="hint" style="font-size:14px">Preview and download the file. Or click Generate prompt to copy a prompt for any LLM.</p></div>
+<div class="sh"><div class="eyebrow">01 — How it works</div><h2>Three steps</h2></div>
+<div class="grid g3">
+<div class="panel"><div class="stepn">01</div><h3>Pick a data type</h3><p class="hint" style="font-size:14px">Choose HR, Facilities or CMDB from the sidebar.</p></div>
+<div class="panel"><div class="stepn">02</div><h3>Choose options</h3><p class="hint" style="font-size:14px">Tick fields, set countries and mixes, and pick an output format.</p></div>
+<div class="panel"><div class="stepn">03</div><h3>Generate</h3><p class="hint" style="font-size:14px">Preview and download the file. Or click Generate prompt to copy a prompt for any LLM.</p></div>
 </div>
+<p class="hint" style="font-size:14px;margin-top:20px">Generating more than one data type? Set up a <a href="#company-profile" style="color:var(--gray-700)">shared company profile</a> below so the files line up.</p>
 </section>
 
-<section>
+<section id="company-profile">
 <div class="sh"><div class="eyebrow">02 — Company profile</div><h2>Do you want to use a shared company profile?</h2></div>
 <div class="panel" id="profPanel">
 <label class="opt" style="padding:4px 0"><input type="checkbox" id="useProf"><span><b style="font-weight:500">Yes, use a shared company profile</b><small>Every data type uses the same company name, email domain, countries, site IDs, employee IDs and cost centers, so HR, Facilities and CMDB data line up when you generate them separately.</small></span></label>
@@ -383,7 +383,7 @@ function closePrompt(){$("#pm").hidden=true;MODAL.b=null;MODAL.last&&MODAL.last.
 /* ---------- routing + global updates ---------- */
 let raf=0;function changed(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderProfile();Object.values(B).forEach(b=>b.update())})}
 document.addEventListener("input",changed);document.addEventListener("change",changed);
-function route(){const id=(location.hash||"#home").slice(1),ok=id==="home"||B[id];$$(".view").forEach(v=>v.hidden=v.id!=="view-"+(ok?id:"home"));$$(".nav").forEach(a=>a.classList.toggle("active",a.dataset.nav===(ok?id:"home")));window.scrollTo(0,0)}
+function route(){const id=(location.hash||"#home").slice(1),ok=id==="home"||B[id];$$(".view").forEach(v=>v.hidden=v.id!=="view-"+(ok?id:"home"));$$(".nav").forEach(a=>a.classList.toggle("active",a.dataset.nav===(ok?id:"home")));if(id==="company-profile")document.getElementById(id).scrollIntoView();else window.scrollTo(0,0)}
 window.addEventListener("hashchange",route);
 </script>
 <script src="gen/common.js"></script>
