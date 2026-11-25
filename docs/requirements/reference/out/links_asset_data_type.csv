@@ -1,0 +1,49 @@
+asset_source_id,data_type
+CI100012,Customers' employee payroll data
+CI100012,EU and UK personal data
+CI100013,EU and UK personal data
+CI100015,Cardholder data (tokens only)
+CI100015,Customer business (KYB) data
+CI100015,EU and UK personal data
+CI100016,EU and UK personal data
+CI100018,Controlled unclassified information (CUI)
+CI100018,Customers' employee payroll data
+CI100020,Customers' employee payroll data
+CI100020,EU and UK personal data
+CI100021,EU and UK personal data
+CI100023,Customers' employee payroll data
+CI100025,Customers' employee payroll data
+CI100027,Customers' employee payroll data
+CI100029,Customers' employee payroll data
+CI100029,SWIFT payment messages
+CI100031,Cardholder data (tokens only)
+CI100033,Customers' employee payroll data
+CI100033,Financial reporting data
+CI100035,Customer business (KYB) data
+CI100035,EU and UK personal data
+CI100036,EU and UK personal data
+CI100038,Cardholder data (tokens only)
+CI100038,Customers' employee payroll data
+CI100040,Customer business (KYB) data
+CI100040,Financial reporting data
+CI100042,Customers' employee payroll data
+CI100044,Customers' employee payroll data
+CI100046,Customers' employee payroll data
+CI100046,EU and UK personal data
+CI100047,EU and UK personal data
+CI100048,Customers' employee payroll data
+CI100048,EU and UK personal data
+CI100050,Customers' employee payroll data
+CI100050,EU and UK personal data
+CI100051,EU and UK personal data
+CI100053,Controlled unclassified information (CUI)
+CI100054,Controlled unclassified information (CUI)
+CI100056,Customers' employee payroll data
+CI100056,EU and UK personal data
+CI100057,EU and UK personal data
+CI100058,SWIFT payment messages
+CI100059,SWIFT payment messages
+CI100060,SWIFT payment messages
+CI100061,SWIFT payment messages
+CI100062,SWIFT payment messages
+CI100063,Employee health information (PHI)

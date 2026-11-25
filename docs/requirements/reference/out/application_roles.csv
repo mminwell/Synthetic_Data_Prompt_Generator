@@ -1,0 +1,386 @@
+application_source_id,application,role,person_id
+APP-001,Larkspur Payroll,Business owner,E10027
+APP-001,Larkspur Payroll,Technical owner,E10059
+APP-001,Larkspur Payroll,Data owner,E10033
+APP-001,Larkspur Payroll,Security contact,E10046
+APP-001,Larkspur Payroll,Privacy contact,E10057
+APP-001,Larkspur Payroll,Access approver,E10027
+APP-001,Larkspur Payroll,Continuity coordinator,E10093
+APP-001,Larkspur Payroll,Disaster recovery lead,E10035
+APP-001,Larkspur Payroll,Executive sponsor,E10005
+APP-002,Larkspur Payments,Business owner,E10026
+APP-002,Larkspur Payments,Technical owner,E10058
+APP-002,Larkspur Payments,Data owner,E10058
+APP-002,Larkspur Payments,Security contact,E10046
+APP-002,Larkspur Payments,Privacy contact,E10057
+APP-002,Larkspur Payments,Access approver,E10026
+APP-002,Larkspur Payments,Vendor manager,E10058
+APP-002,Larkspur Payments,Continuity coordinator,E10093
+APP-002,Larkspur Payments,Disaster recovery lead,E10035
+APP-002,Larkspur Payments,Executive sponsor,E10005
+APP-003,Larkspur Federal,Business owner,E10011
+APP-003,Larkspur Federal,Technical owner,E10022
+APP-003,Larkspur Federal,Data owner,E10022
+APP-003,Larkspur Federal,Security contact,E10067
+APP-003,Larkspur Federal,Privacy contact,E10083
+APP-003,Larkspur Federal,Access approver,E10011
+APP-003,Larkspur Federal,Continuity coordinator,E10093
+APP-003,Larkspur Federal,Disaster recovery lead,E10022
+APP-003,Larkspur Federal,Executive sponsor,E10011
+APP-004,Employee mobile app,Business owner,E10027
+APP-004,Employee mobile app,Technical owner,E10059
+APP-004,Employee mobile app,Data owner,E10033
+APP-004,Employee mobile app,Security contact,E10046
+APP-004,Employee mobile app,Privacy contact,E10057
+APP-004,Employee mobile app,Access approver,E10027
+APP-004,Employee mobile app,Continuity coordinator,E10093
+APP-004,Employee mobile app,Disaster recovery lead,E10035
+APP-004,Employee mobile app,Executive sponsor,E10005
+APP-005,Public API and partner integrations,Business owner,E10027
+APP-005,Public API and partner integrations,Technical owner,E10060
+APP-005,Public API and partner integrations,Data owner,E10033
+APP-005,Public API and partner integrations,Security contact,E10046
+APP-005,Public API and partner integrations,Privacy contact,E10083
+APP-005,Public API and partner integrations,Access approver,E10027
+APP-005,Public API and partner integrations,Continuity coordinator,E10093
+APP-005,Public API and partner integrations,Disaster recovery lead,E10035
+APP-005,Public API and partner integrations,Executive sponsor,E10005
+APP-006,Payroll calculation engine,Business owner,E10059
+APP-006,Payroll calculation engine,Technical owner,E10059
+APP-006,Payroll calculation engine,Data owner,E10033
+APP-006,Payroll calculation engine,Security contact,E10046
+APP-006,Payroll calculation engine,Privacy contact,E10083
+APP-006,Payroll calculation engine,Access approver,E10059
+APP-006,Payroll calculation engine,Continuity coordinator,E10093
+APP-006,Payroll calculation engine,Disaster recovery lead,E10035
+APP-006,Payroll calculation engine,Executive sponsor,E10009
+APP-007,Tax filing service,Business owner,E10033
+APP-007,Tax filing service,Technical owner,E10059
+APP-007,Tax filing service,Data owner,E10033
+APP-007,Tax filing service,Security contact,E10046
+APP-007,Tax filing service,Privacy contact,E10083
+APP-007,Tax filing service,Access approver,E10033
+APP-007,Tax filing service,Continuity coordinator,E10093
+APP-007,Tax filing service,Disaster recovery lead,E10035
+APP-007,Tax filing service,Executive sponsor,E10004
+APP-008,Funds movement and ACH origination,Business owner,E10037
+APP-008,Funds movement and ACH origination,Technical owner,E10058
+APP-008,Funds movement and ACH origination,Data owner,E10033
+APP-008,Funds movement and ACH origination,Security contact,E10046
+APP-008,Funds movement and ACH origination,Privacy contact,E10083
+APP-008,Funds movement and ACH origination,Access approver,E10037
+APP-008,Funds movement and ACH origination,Vendor manager,E10037
+APP-008,Funds movement and ACH origination,Continuity coordinator,E10093
+APP-008,Funds movement and ACH origination,Disaster recovery lead,E10035
+APP-008,Funds movement and ACH origination,Executive sponsor,E10002
+APP-009,Card processing gateway,Business owner,E10058
+APP-009,Card processing gateway,Technical owner,E10058
+APP-009,Card processing gateway,Data owner,E10058
+APP-009,Card processing gateway,Security contact,E10046
+APP-009,Card processing gateway,Privacy contact,E10083
+APP-009,Card processing gateway,Access approver,E10058
+APP-009,Card processing gateway,Vendor manager,E10058
+APP-009,Card processing gateway,Continuity coordinator,E10093
+APP-009,Card processing gateway,Disaster recovery lead,E10035
+APP-009,Card processing gateway,Executive sponsor,E10009
+APP-010,Ledger and reconciliation,Business owner,E10015
+APP-010,Ledger and reconciliation,Technical owner,E10058
+APP-010,Ledger and reconciliation,Data owner,E10033
+APP-010,Ledger and reconciliation,Security contact,E10046
+APP-010,Ledger and reconciliation,Privacy contact,E10083
+APP-010,Ledger and reconciliation,Access approver,E10015
+APP-010,Ledger and reconciliation,Continuity coordinator,E10093
+APP-010,Ledger and reconciliation,Disaster recovery lead,E10035
+APP-010,Ledger and reconciliation,Executive sponsor,E10002
+APP-011,Customer onboarding and KYB/KYC,Business owner,E10051
+APP-011,Customer onboarding and KYB/KYC,Technical owner,E10060
+APP-011,Customer onboarding and KYB/KYC,Data owner,E10051
+APP-011,Customer onboarding and KYB/KYC,Security contact,E10046
+APP-011,Customer onboarding and KYB/KYC,Privacy contact,E10057
+APP-011,Customer onboarding and KYB/KYC,Access approver,E10051
+APP-011,Customer onboarding and KYB/KYC,Vendor manager,E10059
+APP-011,Customer onboarding and KYB/KYC,Continuity coordinator,E10093
+APP-011,Customer onboarding and KYB/KYC,Disaster recovery lead,E10035
+APP-011,Customer onboarding and KYB/KYC,Executive sponsor,E10007
+APP-012,Fraud detection,Business owner,E10042
+APP-012,Fraud detection,Technical owner,E10058
+APP-012,Fraud detection,Data owner,E10033
+APP-012,Fraud detection,Security contact,E10046
+APP-012,Fraud detection,Privacy contact,E10083
+APP-012,Fraud detection,Access approver,E10042
+APP-012,Fraud detection,Continuity coordinator,E10093
+APP-012,Fraud detection,Disaster recovery lead,E10035
+APP-012,Fraud detection,Executive sponsor,E10008
+APP-013,Billing,Business owner,E10015
+APP-013,Billing,Technical owner,E10060
+APP-013,Billing,Data owner,E10051
+APP-013,Billing,Security contact,E10046
+APP-013,Billing,Privacy contact,E10083
+APP-013,Billing,Access approver,E10015
+APP-013,Billing,Continuity coordinator,E10093
+APP-013,Billing,Disaster recovery lead,E10035
+APP-013,Billing,Executive sponsor,E10002
+APP-014,Customer admin console,Business owner,E10027
+APP-014,Customer admin console,Technical owner,E10059
+APP-014,Customer admin console,Data owner,E10033
+APP-014,Customer admin console,Security contact,E10046
+APP-014,Customer admin console,Privacy contact,E10083
+APP-014,Customer admin console,Access approver,E10027
+APP-014,Customer admin console,Continuity coordinator,E10093
+APP-014,Customer admin console,Disaster recovery lead,E10035
+APP-014,Customer admin console,Executive sponsor,E10005
+APP-015,Data warehouse,Business owner,E10060
+APP-015,Data warehouse,Technical owner,E10060
+APP-015,Data warehouse,Data owner,E10033
+APP-015,Data warehouse,Security contact,E10084
+APP-015,Data warehouse,Privacy contact,E10057
+APP-015,Data warehouse,Access approver,E10060
+APP-015,Data warehouse,Vendor manager,E10060
+APP-015,Data warehouse,Continuity coordinator,E10093
+APP-015,Data warehouse,Disaster recovery lead,E10031
+APP-015,Data warehouse,Executive sponsor,E10009
+APP-016,Notification service,Business owner,E10060
+APP-016,Notification service,Technical owner,E10060
+APP-016,Notification service,Data owner,E10033
+APP-016,Notification service,Security contact,E10046
+APP-016,Notification service,Privacy contact,E10083
+APP-016,Notification service,Access approver,E10060
+APP-016,Notification service,Vendor manager,E10060
+APP-016,Notification service,Continuity coordinator,E10093
+APP-016,Notification service,Disaster recovery lead,E10035
+APP-016,Notification service,Executive sponsor,E10009
+APP-017,"Document service (pay stubs, W-2s)",Business owner,E10027
+APP-017,"Document service (pay stubs, W-2s)",Technical owner,E10059
+APP-017,"Document service (pay stubs, W-2s)",Data owner,E10033
+APP-017,"Document service (pay stubs, W-2s)",Security contact,E10046
+APP-017,"Document service (pay stubs, W-2s)",Privacy contact,E10057
+APP-017,"Document service (pay stubs, W-2s)",Access approver,E10027
+APP-017,"Document service (pay stubs, W-2s)",Continuity coordinator,E10093
+APP-017,"Document service (pay stubs, W-2s)",Disaster recovery lead,E10035
+APP-017,"Document service (pay stubs, W-2s)",Executive sponsor,E10005
+APP-018,Customer identity service,Business owner,E10073
+APP-018,Customer identity service,Technical owner,E10060
+APP-018,Customer identity service,Data owner,E10033
+APP-018,Customer identity service,Security contact,E10046
+APP-018,Customer identity service,Privacy contact,E10057
+APP-018,Customer identity service,Access approver,E10073
+APP-018,Customer identity service,Continuity coordinator,E10093
+APP-018,Customer identity service,Disaster recovery lead,E10035
+APP-018,Customer identity service,Executive sponsor,E10008
+APP-019,Federal CUI document vault,Business owner,E10022
+APP-019,Federal CUI document vault,Technical owner,E10022
+APP-019,Federal CUI document vault,Data owner,E10022
+APP-019,Federal CUI document vault,Security contact,E10067
+APP-019,Federal CUI document vault,Privacy contact,E10083
+APP-019,Federal CUI document vault,Access approver,E10022
+APP-019,Federal CUI document vault,Continuity coordinator,E10093
+APP-019,Federal CUI document vault,Disaster recovery lead,E10022
+APP-019,Federal CUI document vault,Executive sponsor,E10011
+APP-020,Internal support console,Business owner,E10036
+APP-020,Internal support console,Technical owner,E10060
+APP-020,Internal support console,Data owner,E10033
+APP-020,Internal support console,Security contact,E10046
+APP-020,Internal support console,Privacy contact,E10057
+APP-020,Internal support console,Access approver,E10036
+APP-020,Internal support console,Continuity coordinator,E10093
+APP-020,Internal support console,Disaster recovery lead,E10035
+APP-020,Internal support console,Executive sponsor,E10004
+APP-021,Workday,Business owner,E10003
+APP-021,Workday,Technical owner,E10028
+APP-021,Workday,Data owner,E10057
+APP-021,Workday,Security contact,E10084
+APP-021,Workday,Privacy contact,E10057
+APP-021,Workday,Access approver,E10003
+APP-021,Workday,Vendor manager,E10028
+APP-021,Workday,Continuity coordinator,E10093
+APP-021,Workday,Disaster recovery lead,E10031
+APP-021,Workday,Executive sponsor,E10003
+APP-022,Greenhouse,Business owner,E10003
+APP-022,Greenhouse,Technical owner,E10028
+APP-022,Greenhouse,Data owner,E10003
+APP-022,Greenhouse,Security contact,E10084
+APP-022,Greenhouse,Privacy contact,E10083
+APP-022,Greenhouse,Access approver,E10003
+APP-022,Greenhouse,Vendor manager,E10028
+APP-022,Greenhouse,Continuity coordinator,E10093
+APP-022,Greenhouse,Disaster recovery lead,E10031
+APP-022,Greenhouse,Executive sponsor,E10003
+APP-023,NetSuite,Business owner,E10002
+APP-023,NetSuite,Technical owner,E10015
+APP-023,NetSuite,Data owner,E10002
+APP-023,NetSuite,Security contact,E10084
+APP-023,NetSuite,Privacy contact,E10083
+APP-023,NetSuite,Access approver,E10002
+APP-023,NetSuite,Vendor manager,E10015
+APP-023,NetSuite,Continuity coordinator,E10093
+APP-023,NetSuite,Disaster recovery lead,E10031
+APP-023,NetSuite,Executive sponsor,E10002
+APP-024,Salesforce,Business owner,E10006
+APP-024,Salesforce,Technical owner,E10031
+APP-024,Salesforce,Data owner,E10051
+APP-024,Salesforce,Security contact,E10084
+APP-024,Salesforce,Privacy contact,E10083
+APP-024,Salesforce,Access approver,E10006
+APP-024,Salesforce,Vendor manager,E10045
+APP-024,Salesforce,Continuity coordinator,E10093
+APP-024,Salesforce,Disaster recovery lead,E10031
+APP-024,Salesforce,Executive sponsor,E10006
+APP-025,Zendesk,Business owner,E10036
+APP-025,Zendesk,Technical owner,E10031
+APP-025,Zendesk,Data owner,E10033
+APP-025,Zendesk,Security contact,E10084
+APP-025,Zendesk,Privacy contact,E10057
+APP-025,Zendesk,Access approver,E10036
+APP-025,Zendesk,Vendor manager,E10036
+APP-025,Zendesk,Continuity coordinator,E10093
+APP-025,Zendesk,Disaster recovery lead,E10031
+APP-025,Zendesk,Executive sponsor,E10004
+APP-026,Okta,Business owner,E10014
+APP-026,Okta,Technical owner,E10073
+APP-026,Okta,Data owner,E10014
+APP-026,Okta,Security contact,E10084
+APP-026,Okta,Privacy contact,E10083
+APP-026,Okta,Access approver,E10014
+APP-026,Okta,Vendor manager,E10073
+APP-026,Okta,Continuity coordinator,E10093
+APP-026,Okta,Disaster recovery lead,E10031
+APP-026,Okta,Executive sponsor,E10008
+APP-027,Microsoft 365,Business owner,E10031
+APP-027,Microsoft 365,Technical owner,E10031
+APP-027,Microsoft 365,Data owner,E10057
+APP-027,Microsoft 365,Security contact,E10084
+APP-027,Microsoft 365,Privacy contact,E10057
+APP-027,Microsoft 365,Access approver,E10031
+APP-027,Microsoft 365,Vendor manager,E10031
+APP-027,Microsoft 365,Continuity coordinator,E10093
+APP-027,Microsoft 365,Disaster recovery lead,E10031
+APP-027,Microsoft 365,Executive sponsor,E10004
+APP-028,Slack,Business owner,E10031
+APP-028,Slack,Technical owner,E10031
+APP-028,Slack,Data owner,E10031
+APP-028,Slack,Security contact,E10084
+APP-028,Slack,Privacy contact,E10083
+APP-028,Slack,Access approver,E10031
+APP-028,Slack,Vendor manager,E10045
+APP-028,Slack,Continuity coordinator,E10093
+APP-028,Slack,Disaster recovery lead,E10031
+APP-028,Slack,Executive sponsor,E10004
+APP-029,Jira and Confluence,Business owner,E10039
+APP-029,Jira and Confluence,Technical owner,E10031
+APP-029,Jira and Confluence,Data owner,E10039
+APP-029,Jira and Confluence,Security contact,E10084
+APP-029,Jira and Confluence,Privacy contact,E10083
+APP-029,Jira and Confluence,Access approver,E10039
+APP-029,Jira and Confluence,Vendor manager,E10039
+APP-029,Jira and Confluence,Continuity coordinator,E10093
+APP-029,Jira and Confluence,Disaster recovery lead,E10031
+APP-029,Jira and Confluence,Executive sponsor,E10009
+APP-030,GitHub Enterprise,Business owner,E10039
+APP-030,GitHub Enterprise,Technical owner,E10060
+APP-030,GitHub Enterprise,Data owner,E10039
+APP-030,GitHub Enterprise,Security contact,E10084
+APP-030,GitHub Enterprise,Privacy contact,E10083
+APP-030,GitHub Enterprise,Access approver,E10039
+APP-030,GitHub Enterprise,Vendor manager,E10039
+APP-030,GitHub Enterprise,Continuity coordinator,E10093
+APP-030,GitHub Enterprise,Disaster recovery lead,E10031
+APP-030,GitHub Enterprise,Executive sponsor,E10009
+APP-031,ServiceNow,Business owner,E10031
+APP-031,ServiceNow,Technical owner,E10031
+APP-031,ServiceNow,Data owner,E10031
+APP-031,ServiceNow,Security contact,E10084
+APP-031,ServiceNow,Privacy contact,E10083
+APP-031,ServiceNow,Access approver,E10031
+APP-031,ServiceNow,Vendor manager,E10031
+APP-031,ServiceNow,Continuity coordinator,E10093
+APP-031,ServiceNow,Disaster recovery lead,E10031
+APP-031,ServiceNow,Executive sponsor,E10004
+APP-032,Jamf,Business owner,E10031
+APP-032,Jamf,Technical owner,E10031
+APP-032,Jamf,Data owner,E10031
+APP-032,Jamf,Security contact,E10084
+APP-032,Jamf,Access approver,E10031
+APP-032,Jamf,Vendor manager,E10031
+APP-032,Jamf,Continuity coordinator,E10093
+APP-032,Jamf,Disaster recovery lead,E10031
+APP-032,Jamf,Executive sponsor,E10004
+APP-033,CrowdStrike Falcon,Business owner,E10014
+APP-033,CrowdStrike Falcon,Technical owner,E10085
+APP-033,CrowdStrike Falcon,Data owner,E10014
+APP-033,CrowdStrike Falcon,Security contact,E10084
+APP-033,CrowdStrike Falcon,Privacy contact,E10083
+APP-033,CrowdStrike Falcon,Access approver,E10014
+APP-033,CrowdStrike Falcon,Vendor manager,E10085
+APP-033,CrowdStrike Falcon,Continuity coordinator,E10093
+APP-033,CrowdStrike Falcon,Disaster recovery lead,E10031
+APP-033,CrowdStrike Falcon,Executive sponsor,E10008
+APP-034,Splunk,Business owner,E10014
+APP-034,Splunk,Technical owner,E10085
+APP-034,Splunk,Data owner,E10014
+APP-034,Splunk,Security contact,E10084
+APP-034,Splunk,Privacy contact,E10083
+APP-034,Splunk,Access approver,E10014
+APP-034,Splunk,Vendor manager,E10085
+APP-034,Splunk,Continuity coordinator,E10093
+APP-034,Splunk,Disaster recovery lead,E10031
+APP-034,Splunk,Executive sponsor,E10008
+APP-035,Wiz,Business owner,E10014
+APP-035,Wiz,Technical owner,E10084
+APP-035,Wiz,Data owner,E10014
+APP-035,Wiz,Security contact,E10084
+APP-035,Wiz,Privacy contact,E10083
+APP-035,Wiz,Access approver,E10014
+APP-035,Wiz,Vendor manager,E10084
+APP-035,Wiz,Continuity coordinator,E10093
+APP-035,Wiz,Disaster recovery lead,E10031
+APP-035,Wiz,Executive sponsor,E10008
+APP-036,Proofpoint,Business owner,E10014
+APP-036,Proofpoint,Technical owner,E10084
+APP-036,Proofpoint,Data owner,E10014
+APP-036,Proofpoint,Security contact,E10084
+APP-036,Proofpoint,Privacy contact,E10083
+APP-036,Proofpoint,Access approver,E10014
+APP-036,Proofpoint,Vendor manager,E10084
+APP-036,Proofpoint,Continuity coordinator,E10093
+APP-036,Proofpoint,Disaster recovery lead,E10031
+APP-036,Proofpoint,Executive sponsor,E10008
+APP-037,KnowBe4,Business owner,E10034
+APP-037,KnowBe4,Technical owner,E10034
+APP-037,KnowBe4,Data owner,E10034
+APP-037,KnowBe4,Security contact,E10084
+APP-037,KnowBe4,Privacy contact,E10083
+APP-037,KnowBe4,Access approver,E10034
+APP-037,KnowBe4,Vendor manager,E10034
+APP-037,KnowBe4,Continuity coordinator,E10093
+APP-037,KnowBe4,Disaster recovery lead,E10031
+APP-037,KnowBe4,Executive sponsor,E10008
+APP-038,athenahealth,Business owner,E10032
+APP-038,athenahealth,Technical owner,E10031
+APP-038,athenahealth,Data owner,E10072
+APP-038,athenahealth,Security contact,E10084
+APP-038,athenahealth,Privacy contact,E10072
+APP-038,athenahealth,Access approver,E10032
+APP-038,athenahealth,Vendor manager,E10032
+APP-038,athenahealth,Continuity coordinator,E10093
+APP-038,athenahealth,Disaster recovery lead,E10031
+APP-038,athenahealth,Executive sponsor,E10003
+APP-039,Verkada,Business owner,E10043
+APP-039,Verkada,Technical owner,E10031
+APP-039,Verkada,Data owner,E10043
+APP-039,Verkada,Security contact,E10084
+APP-039,Verkada,Privacy contact,E10083
+APP-039,Verkada,Access approver,E10043
+APP-039,Verkada,Vendor manager,E10043
+APP-039,Verkada,Continuity coordinator,E10093
+APP-039,Verkada,Disaster recovery lead,E10031
+APP-039,Verkada,Executive sponsor,E10008
+APP-040,DocuSign,Business owner,E10012
+APP-040,DocuSign,Technical owner,E10031
+APP-040,DocuSign,Data owner,E10012
+APP-040,DocuSign,Security contact,E10084
+APP-040,DocuSign,Privacy contact,E10083
+APP-040,DocuSign,Access approver,E10012
+APP-040,DocuSign,Vendor manager,E10012
+APP-040,DocuSign,Continuity coordinator,E10093
+APP-040,DocuSign,Disaster recovery lead,E10031
+APP-040,DocuSign,Executive sponsor,E10012

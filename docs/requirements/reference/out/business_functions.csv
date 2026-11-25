@@ -1,0 +1,11 @@
+name,business_unit_code,criticality
+Payroll operations,OPS-PPO,Critical
+Treasury and funds settlement,FIN-TRS,Critical
+Customer onboarding (KYB),RSK-CMP,High
+Customer support,OPS-SUP,High
+Financial reporting,FIN-ACC,High
+Federal program delivery,FED-ENG,High
+Security monitoring,SEC-CYB-OPS,High
+Software delivery,TEC-ENG,High
+Hiring and onboarding,PPL-HR,Medium
+Employee health clinic,PPL-CLN,Medium

@@ -53,3 +53,12 @@ The sidebar link, home-page card and page sections are all generated from the co
 1. In Vercel, choose **Add New → Project** and import this repository.
 2. Set the framework preset to **Other**. Leave the build command and output directory empty.
 3. Deploy. Every push to `main` redeploys automatically.
+
+## Build a company
+
+**Build a company** generates a whole fictional company from one profile file (YAML or JSON), such as `docs/requirements/larkspur-pay.profile.yaml`. It produces a .zip of CSVs for the GRC platform's Foundation import, plus `validation-report.md` and `README.md`. Downloads stay off while any check fails.
+
+The generator is a list of modules in `gen/company/`: `org` (hierarchy and people), `facilities`, `catalog` (data types, vendors, services), `applications` and `assets`. You can tick only the modules you need; any module they depend on is included automatically. New data areas, such as incidents and risks, plug in as more modules. Larkspur-specific rules live in `gen/company/rules.js`, and a profile can override them with `generator_rules:`.
+
+- After editing an example profile, run `node tools/bundle-profiles.mjs`.
+- Run the tests with `node --test tests/company.test.mjs`. They check byte-identical reruns, headers matching `docs/requirements/reference/out/`, row counts within ±2%, and one test per check that breaks it on purpose.
