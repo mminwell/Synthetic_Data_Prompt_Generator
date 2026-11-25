@@ -62,3 +62,5 @@ The generator is a list of modules in `gen/company/`: `org` (hierarchy and peopl
 
 - After editing an example profile, run `node tools/bundle-profiles.mjs`.
 - Run the tests with `node --test tests/company.test.mjs`. They check byte-identical reruns, headers matching `docs/requirements/reference/out/`, row counts within ±2%, and one test per check that breaks it on purpose.
+
+Output uses the GRC Foundation value lists (site, area, vendor, application and asset picklists) from `gen/company/foundation.js`, so the import accepts every row. Laptops are derived from `md5("larkspur-pay:laptop:<person ID>")`, with source IDs `LT-<person ID>`. The GRC seed rebuilds the same laptops with the same formula, so don't change it without changing the seed too.

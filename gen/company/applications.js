@@ -10,7 +10,6 @@
     return COMPANY.uniq(regs);
   };
   const countries = a => a.federal ? ["US"] : (a.data || []).includes("eu") ? ["US", "IE", "GB"] : ["US"];
-  const HOST = { "Built in-house (cloud)": "Cloud (built in-house)", "Built in-house (GovCloud)": "Cloud (built in-house, GovCloud)", SaaS: "SaaS" };
   const CATEGORY = { product: "Customer-facing product", platform: "Internal platform component", corporate: "Corporate system" };
 
   COMPANY.register({
@@ -34,6 +33,7 @@
         if (a.vendor) add(a, "Vendor manager", VENDORS[a.vendor].owner);
         add(a, "Continuity coordinator", R.continuity);
         add(a, "Disaster recovery lead", fed ? R.dr_federal : inhouse ? R.dr_inhouse : R.dr_saas);
+        add(a, "Emergency contact", fed ? R.dr_federal : inhouse ? R.dr_inhouse : R.dr_saas);
         add(a, "Executive sponsor", UNITS[ctx.divisionOf(ctx.byPos[a.owner][0].unit)].head);
       }
       for (const r of roles) ctx.owners.push({ id: r.person_id, what: `${r.role} of ${r.application_source_id}` });
@@ -44,14 +44,18 @@
         const inhouse = a.hosting.startsWith("Built"), data = a.data || [];
         const storage = a.hosting === "Built in-house (cloud)" ? ["AWS us-west-2"].concat(data.includes("eu") ? ["AWS eu-west-1"] : [])
           : a.federal ? ["AWS GovCloud (US) us-gov-west-1"] : [a.vendor ? `Vendor: ${VENDORS[a.vendor].name}` : "Vendor"];
+        const FV = COMPANY.FV, saas = a.hosting === "SaaS", [internalUsers, externalUsers] = FV.userRanges(a);
         return { source_id: a.id, name: a.name, application_category: CATEGORY[a.kind], business_owner_employee_id: ctx.pid(a.owner),
-          hosting_model: HOST[a.hosting], vendor_code: a.vendor || "", internet_facing: a.internet_facing, users: a.users, sign_in_method: a.sign_in,
-          source: RULES.source_name, code_repository: inhouse ? `GitHub Enterprise: ${RULES.code_org}/${COMPANY.slug(a.name)}` : "",
-          environments: inhouse ? ["Production", "Staging", "Development"] : ["Production"], lifecycle_status: "Production",
-          data_types_handled: data.map(k => DTYPES[k].name), revenue_supported: a.revenue, cost_of_outage_per_day: a.outage,
-          users_affected: a.users_affected, records_held: a.records, data_storage_locations: storage, countries_and_regions: countries(a),
+          hosting_model: saas ? "SaaS" : "Cloud (our account)", vendor_code: a.vendor || "", internet_facing: a.internet_facing, users: a.users,
+          sign_in_methods: FV.signIn(a.sign_in), source: saas ? "SaaS" : "Built in-house",
+          code_repository: inhouse ? `${RULES.code_repo_base}/${COMPANY.slug(a.name)}` : "",
+          environments: inhouse ? ["Production", "Staging", "Development"].concat(a.federal ? [] : ["DR"]) : ["Production"], lifecycle_status: "Live",
+          data_types_handled: data.map(k => DTYPES[k].name), data_classification: COMPANY.maxClass(ctx, data),
+          revenue_supported: FV.capRange(a.revenue), cost_of_outage_per_day: FV.capRange(a.outage),
+          internal_users: internalUsers, external_users: externalUsers, records_held: FV.capRange(a.records),
+          data_storage_locations: storage, countries_and_regions: countries(a),
           regulatory_scope: COMPANY.appRegs(ctx, a), financially_significant: !!a.fin_sig, customer_facing: a.kind === "product",
-          contractual_commitments: a.contractual || "", rto_hours: a.rto, rpo_hours: a.rpo, maximum_tolerable_downtime_hours: a.mtd,
+          contractual_commitments: !!a.contractual, contractual_note: a.contractual || "", rto_hours: a.rto, rpo_hours: a.rpo, maximum_tolerable_downtime_hours: a.mtd,
           reputational_impact: a.reputational, larkspur_federal: !!a.federal };
       });
       COMPANY.table(ctx, "applications.csv", Object.keys(rows[0]), rows);
@@ -67,6 +71,10 @@
       const onFed = ctx.appRoles.filter(r => fedApps.has(r.application_source_id));
       let bad = COMPANY.uniq(onFed.filter(r => !fedGroup.has(r.person_id)).map(r => r.person_id));
       COMPANY.check(ctx, "Everyone with a role on a federal application has federal access", !bad.length, bad.join(", "));
+      const have = {};
+      for (const r of ctx.appRoles) (have[r.application_source_id] = have[r.application_source_id] || new Set()).add(r.role);
+      bad = P.applications.filter(a => RULES.required_app_roles.some(role => !(have[a.id] && have[a.id].has(role)))).map(a => a.id);
+      COMPANY.check(ctx, "Every application has the required roles (technical owner, data owner, security contact, emergency contact)", !bad.length, bad.join(", "));
       bad = COMPANY.uniq(onFed.filter(r => byId[r.person_id].site === RULES.restricted_site).map(r => r.person_id));
       COMPANY.check(ctx, "No Manila person is linked to a federal application", !bad.length, bad.join(", "));
       bad = P.applications.filter(a => { const scope = new Set(COMPANY.appRegs(ctx, a)); return (a.data || []).some(k => ((P.regulations_by_data_type || {})[k] || []).some(x => !scope.has(x))); }).map(a => a.id);

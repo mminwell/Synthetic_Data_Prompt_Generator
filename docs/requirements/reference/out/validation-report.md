@@ -18,6 +18,7 @@ Profile `larkspur-pay.profile.yaml`, seed 20261125, as of 2026-11-25. Result: **
 | Larkspur Federal staff work in US locations | Pass |  |
 | No Manila person has federal access | Pass |  |
 | Everyone with a role on a federal application has federal access | Pass |  |
+| Every application has the required roles (technical owner, data owner, security contact, emergency contact) | Pass |  |
 | No Manila person is linked to a federal application | Pass |  |
 | Every owner is an active person | Pass |  |
 | Application regulatory scope covers its data types | Pass |  |
@@ -32,9 +33,9 @@ Profile `larkspur-pay.profile.yaml`, seed 20261125, as of 2026-11-25. Result: **
 ## Counts
 | File | Rows |
 |---|---|
-| `application_roles.csv` | 385 |
+| `application_roles.csv` | 425 |
 | `applications.csv` | 40 |
-| `assets.csv` | 633 |
+| `assets.csv` | 634 |
 | `business_functions.csv` | 10 |
 | `business_units.csv` | 51 |
 | `data_types.csv` | 12 |

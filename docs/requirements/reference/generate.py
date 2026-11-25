@@ -358,6 +358,7 @@ for a in P["applications"]:
         add_role(a, "Vendor manager", VENDORS[a["vendor"]]["owner"])
     add_role(a, "Continuity coordinator", "bcdr_analyst")
     add_role(a, "Disaster recovery lead", "fed_eng_dir" if fed else ("sre_head" if inhouse else "it_dir"))
+    add_role(a, "Emergency contact", "fed_eng_dir" if fed else ("sre_head" if inhouse else "it_dir"))
     exec_key = UNITS[division_of(by_pos[a["owner"]][0]["unit"])]["head"]
     add_role(a, "Executive sponsor", exec_key)
 
@@ -465,23 +466,100 @@ for sid in SITES:
     owner = "phys_arl" if sid == "LP-ARL-01" else "it_dir"
     for ci, mfr, mdl in (("Firewall", "Palo Alto Networks", "PA-440"), ("Switch", "Cisco", "Catalyst 9300"), ("Switch", "Cisco", "Catalyst 9200"), ("Switch", "Cisco", "Catalyst 9200"), ("Wireless controller", "Cisco", "Catalyst 9800-L")):
         add_asset(nr, name=f"{short}-{slug(ci)}", ci_class=ci, env="Production", hosting="On-premises", owner_key="it_dir", source="ServiceNow", location=closet, manufacturer=mfr, model=mdl, serial=f"{mfr[:3].upper()}{nr.randrange(10**7, 10**8)}", hostname=f"{short}-{slug(ci)}-{nr.randrange(1, 9):02d}", services=["svc_corp_it"], eol=D(2030, 12, 31))
-# Laptops: one per active or on-leave person, a few spares, retired ones for leavers
+# Laptops: one per active or on-leave person, plus some retired ones for leavers.
+# Every detail comes from md5("larkspur-pay:laptop:<person ID>") so a database
+# seed can rebuild exactly the same laptops from the people (see build_seed.py).
+def hexint(h, a, b):
+    return int(h[a:b], 16)
+
 for p in people:
-    lr = sub_rng("laptop", p["id"])
-    mac = lr.random() < (0.35 if division_of(p["unit"]) in ("FIN",) else 0.85)
-    status = "In use" if p["status"] != "terminated" else "Retired"
-    if p["status"] == "terminated" and lr.random() > 0.2:
+    h = hashlib.md5(f"larkspur-pay:laptop:{p['id']}".encode()).hexdigest()
+    term = p["status"] == "terminated"
+    if term and hexint(h, 2, 4) / 255 > 0.2:
         continue
-    loc = p["site"]
-    add_asset(lr, name=f"Laptop {p['id']}", ci_class="Laptop", env="Corporate", hosting="Endpoint", owner_key=None, source="Jamf" if mac else "Microsoft Intune",
-              location=loc, os_="macOS 15" if mac else "Windows 11 Enterprise", manufacturer="Apple" if mac else "Dell",
-              model="MacBook Pro 14-inch" if mac else "Latitude 7450", serial=f"{'C02' if mac else 'DL'}{lr.randrange(10**7, 10**8)}",
-              hostname=f"lp-{p['id'].lower()}", lifecycle=status, classification="Confidential")
-    assets[-1]["technical_owner"] = pid("it_dir")
-    assets[-1]["assigned_to"] = p["id"]
+    mac = hexint(h, 0, 2) / 255 < (0.35 if division_of(p["unit"]) == "FIN" else 0.85)
+    install = min(max(p["hire"], D(2021, 1, 1)) + dt.timedelta(days=hexint(h, 12, 16) % 365), AS_OF - dt.timedelta(days=30))
+    assets.append({
+        "source_system": "Jamf" if mac else "Microsoft Intune", "source_id": f"LT-{p['id']}", "cloud_resource_id": "",
+        "name": f"Laptop {p['id']}", "asset_type": "Laptop", "environment": "Corporate", "hostname": f"lp-{p['id'].lower()}",
+        "ip_addresses": f"10.60.{hexint(h, 18, 20)}.{hexint(h, 20, 22) % 250 + 2}",
+        "os": "macOS 15" if mac else "Windows 11 Enterprise", "software": "", "manufacturer": "Apple" if mac else "Dell",
+        "model": "MacBook Pro 14-inch" if mac else "Latitude 7450",
+        "serial_number": ("C02" if mac else "DL") + str(hexint(h, 4, 12) % 10**8).zfill(8),
+        "hosting_type": "Endpoint", "cloud_provider": "", "cloud_account": "", "cloud_region": "", "location": p["site"],
+        "technical_owner": pid("it_dir"), "assigned_to": p["id"], "services_supported": "", "data_classification": "Confidential",
+        "cost_center": "", "lifecycle_status": "Retired" if term else "In use", "install_date": install, "end_of_life_date": "",
+        "last_patched_date": "" if term else AS_OF - dt.timedelta(days=hexint(h, 16, 18) % 42 + 3),
+        "discovery_source": "Jamf" if mac else "Microsoft Intune", "last_seen": "" if term else AS_OF})
 for i in range(15):
     sr = sub_rng("spare", i)
     add_asset(sr, name=f"Spare laptop {i + 1}", ci_class="Laptop", env="Corporate", hosting="Endpoint", owner_key="it_dir", source="Jamf", location="LP-DEN-HQ", os_="macOS 15", manufacturer="Apple", model="MacBook Pro 14-inch", serial=f"C02{sr.randrange(10**7, 10**8)}", hostname="", lifecycle="In stock")
+
+
+# ---------------------------------------------------------------------------
+# Foundation value lists (docs/design/foundation.md 5.3). Output uses these
+# exact values so the GRC platform's import accepts every row.
+# ---------------------------------------------------------------------------
+def site_type(t):
+    return {"Headquarters": "Headquarters", "Data center": "Data center", "Colocation": "Colocation",
+            "Warehouse": "Warehouse", "Lab": "Lab", "Coworking": "Coworking"}.get(t, "Office")
+
+def ownership(o):
+    return o if o in ("Owned", "Leased", "Colocation") else "Leased"
+
+def area_type(t):
+    return t if t in ("Server room", "Data hall", "Network closet", "Vault", "Records room") else "Other"
+
+def access_control(text):
+    t = text.lower()
+    out = [v for k, v in (("badge", "Badge"), ("biometric", "Biometric"), ("key", "Key"), ("escort", "Escort required"),
+                          ("camera", "Camera"), ("pin", "PIN")) if k in t]
+    return out or ["Badge"]
+
+def vendor_type(t):
+    t = t.lower()
+    if "event" in t:
+        return "Services"
+    if any(k in t for k in ("hardware", "reseller")):
+        return "Hardware"
+    if any(k in t for k in ("auditor", "assessment organization", "counsel")):
+        return "Consulting"
+    if any(k in t for k in ("cloud infrastructure", "data platform", "cdn", "hosting")):
+        return "Cloud/hosting"
+    if any(k in t for k in ("saas", "identity", "security", "siem", "management", "tool", "health records", "conferencing",
+                            "alerting", "training", "whiteboard", "scheduling", "video", "writing", "design", "access control")):
+        return "Software"
+    return "Services"
+
+CATEGORY = {"payroll": "Financial", "kyb": "Financial", "card": "Payment card", "cui": "Other", "hr": "Employee",
+            "phi": "Health", "eu": "Personal", "applicant": "Employee", "swift": "Financial", "code": "Intellectual property",
+            "logs": "Other", "finrep": "Financial"}
+
+def sign_in(s_):
+    s_ = s_.lower()
+    if "okta" in s_:
+        return ["SSO", "MFA"]
+    if "customer identity" in s_ or "vendor accounts" in s_:
+        return ["Local accounts", "MFA"]
+    return ["Other"]
+
+def cap_range(v):
+    return v[:1].upper() + v[1:] if v else v
+
+def user_ranges(a):
+    v = cap_range(a["users_affected"])
+    if a["users"] == "Internal":
+        return v, "None"
+    return "Under 1,000", v
+
+ASSET_TYPE = {"Container cluster": "Cloud resource", "Container service": "Cloud resource", "Load balancer": "Cloud resource",
+              "Encryption key": "Cloud resource", "Storage bucket": "Storage", "Database": "Database",
+              "Virtual machine": "Virtual machine", "Workstation": "Workstation", "Laptop": "Workstation",
+              "Firewall": "Network device", "Switch": "Network device", "Wireless controller": "Network device"}
+ENVIRONMENT = {"Production": "Production", "Disaster recovery": "DR", "Corporate": "Production"}
+HOSTING_TYPE = {"Cloud": "Public cloud", "On-premises": "On-premises", "Endpoint": "On-premises"}
+LIFECYCLE = {"In use": "Operational", "Retired": "Retired", "In stock": "Non-operational"}
+DISCOVERY = {"Jamf": "Agent", "Microsoft Intune": "Agent", "AWS Config": "Cloud API", "ServiceNow": "Manual"}
 
 # ---------------------------------------------------------------------------
 # Write files
@@ -517,9 +595,9 @@ counts["business_units.csv"] = write("business_units.csv",
 
 counts["facilities_sites.csv"] = write("facilities_sites.csv",
     ["site_id", "name", "site_type", "address", "city", "state_province", "postal_code", "country", "region", "time_zone", "ownership", "landlord_or_provider", "lease_end_date", "facility_manager_employee_id", "business_units_present", "status"],
-    [{"site_id": s["id"], "name": s["name"], "site_type": s["type"], "address": s["building"], "city": s["city"],
+    [{"site_id": s["id"], "name": s["name"], "site_type": site_type(s["type"]), "address": s["building"], "city": s["city"],
       "state_province": s["state"], "postal_code": s["postal_code"], "country": s["country"], "region": s["region"],
-      "time_zone": s["time_zone"], "ownership": s["ownership"], "landlord_or_provider": s["landlord"], "lease_end_date": s["lease_end"],
+      "time_zone": s["time_zone"], "ownership": ownership(s["ownership"]), "landlord_or_provider": s["landlord"], "lease_end_date": s["lease_end"],
       "facility_manager_employee_id": pid(s["facility_manager"]),
       "business_units_present": sorted({p["unit"] for p in people if p["site"] == s["id"] and p["status"] != "terminated"}),
       "status": "Active"} for s in P["sites"]])
@@ -530,7 +608,7 @@ counts["facilities_buildings.csv"] = write("facilities_buildings.csv",
 
 counts["facilities_secure_areas.csv"] = write("facilities_secure_areas.csv",
     ["area_id", "name", "building_id", "area_type", "access_control", "area_owner_employee_id", "purpose"],
-    [{"area_id": a["id"], "name": a["name"], "building_id": f"{a['site']}-B1", "area_type": a["type"], "access_control": a["access_control"],
+    [{"area_id": a["id"], "name": a["name"], "building_id": f"{a['site']}-B1", "area_type": area_type(a["type"]), "access_control": access_control(a["access_control"]),
       "area_owner_employee_id": pid(a["owner"]), "purpose": a["purpose"]} for a in P["secure_areas"]])
 
 all_people = people + list(vendor_contacts.values())
@@ -569,7 +647,7 @@ counts["group_members.csv"] = write("group_members.csv", ["group_name", "employe
     [{"group_name": g, "employee_id": m} for g in sorted(groups) for m in sorted(groups[g])])
 
 counts["data_types.csv"] = write("data_types.csv", ["name", "category", "classification", "regulatory_tags", "data_steward_employee_id"],
-    [{"name": t["name"], "category": t["category"], "classification": t["classification"], "regulatory_tags": t["regulatory_tags"],
+    [{"name": t["name"], "category": CATEGORY[t["key"]], "classification": t["classification"], "regulatory_tags": t["regulatory_tags"],
       "data_steward_employee_id": pid(t["steward"])} for t in P["data_types"]])
 
 def contract(code):
@@ -583,7 +661,7 @@ def contract(code):
 vrows = []
 for v in P["vendors"]:
     cs, ce, cr = contract(v["code"])
-    vrows.append({"vendor_code": v["code"], "name": v["name"], "website_domain": v["domain"], "vendor_type": v["type"], "tier": v["tier"],
+    vrows.append({"vendor_code": v["code"], "name": v["name"], "website_domain": v["domain"], "vendor_type": vendor_type(v["type"]), "description": v["type"], "tier": v["tier"],
                   "status": "Active", "relationship_owner_employee_id": pid(v["owner"]), "business_units_using": v.get("units", []),
                   "data_types_accessed": [DTYPES[k]["name"] for k in v.get("data", [])], "system_access": bool(v.get("system_access")),
                   "country": v.get("country", ""), "contract_start": cs, "contract_end": ce, "renewal_notice_date": cr,
@@ -591,11 +669,11 @@ for v in P["vendors"]:
 counts["vendors.csv"] = write("vendors.csv", list(vrows[0].keys()), vrows)
 
 counts["products.csv"] = write("products.csv", ["product_key", "name", "business_unit_code", "owner_employee_id", "status", "markets", "revenue_supported", "rto_hours", "customer_facing"],
-    [{"product_key": p["key"], "name": p["name"], "business_unit_code": p["unit"], "owner_employee_id": pid(p["owner"]), "status": "Active",
+    [{"product_key": p["key"], "name": p["name"], "business_unit_code": p["unit"], "owner_employee_id": pid(p["owner"]), "status": "Live",
       "markets": p["markets"], "revenue_supported": p["revenue"], "rto_hours": p["rto_hours"], "customer_facing": p["customer_facing"]} for p in P["products"]])
 counts["services.csv"] = write("services.csv", ["service_key", "name", "service_type", "business_units_served", "owner_employee_id", "customers", "status", "rto_hours"],
-    [{"service_key": s["key"], "name": s["name"], "service_type": s["type"], "business_units_served": s["units"], "owner_employee_id": pid(s["owner"]),
-      "customers": s["customers"], "status": "Active", "rto_hours": s["rto_hours"]} for s in P["services"]])
+    [{"service_key": s["key"], "name": s["name"], "service_type": "Technology service" if s["type"] == "Internal service" else s["type"], "business_units_served": s["units"], "owner_employee_id": pid(s["owner"]),
+      "customers": s["customers"], "status": "Live", "rto_hours": s["rto_hours"]} for s in P["services"]])
 counts["business_functions.csv"] = write("business_functions.csv", ["name", "business_unit_code", "criticality"],
     [{"name": b["name"], "business_unit_code": b["unit"], "criticality": b["criticality"]} for b in P["business_functions"]])
 
@@ -603,15 +681,20 @@ HOST = {"Built in-house (cloud)": "Cloud (built in-house)", "Built in-house (Gov
 arows = []
 for a in P["applications"]:
     inhouse = a["hosting"].startswith("Built")
+    internal_u, external_u = user_ranges(a)
     arows.append({"source_id": a["id"], "name": a["name"], "application_category": {"product": "Customer-facing product", "platform": "Internal platform component", "corporate": "Corporate system"}[a["kind"]],
-                  "business_owner_employee_id": pid(a["owner"]), "hosting_model": HOST[a["hosting"]], "vendor_code": a.get("vendor", ""),
-                  "internet_facing": a["internet_facing"], "users": a["users"], "sign_in_method": a["sign_in"], "source": "Larkspur application inventory",
-                  "code_repository": f"GitHub Enterprise: larkspur/{slug(a['name'])}" if inhouse else "", "environments": ["Production", "Staging", "Development"] if inhouse else ["Production"],
-                  "lifecycle_status": "Production", "data_types_handled": [DTYPES[k]["name"] for k in a.get("data", [])],
-                  "revenue_supported": a["revenue"], "cost_of_outage_per_day": a["outage"], "users_affected": a["users_affected"], "records_held": a["records"],
+                  "business_owner_employee_id": pid(a["owner"]), "hosting_model": "SaaS" if a["hosting"] == "SaaS" else "Cloud (our account)",
+                  "vendor_code": a.get("vendor", ""), "internet_facing": a["internet_facing"], "users": a["users"],
+                  "sign_in_methods": sign_in(a["sign_in"]), "source": "SaaS" if a["hosting"] == "SaaS" else "Built in-house",
+                  "code_repository": f"https://github.example/larkspur/{slug(a['name'])}" if inhouse else "",
+                  "environments": (["Production", "Staging", "Development"] + ([] if a.get("federal") else ["DR"])) if inhouse else ["Production"],
+                  "lifecycle_status": "Live", "data_types_handled": [DTYPES[k]["name"] for k in a.get("data", [])],
+                  "data_classification": max((DTYPES[k]["classification"] for k in a.get("data", [])), key=lambda c: ["Public", "Internal", "Confidential", "Restricted"].index(c), default="Internal"),
+                  "revenue_supported": cap_range(a["revenue"]), "cost_of_outage_per_day": cap_range(a["outage"]),
+                  "internal_users": internal_u, "external_users": external_u, "records_held": cap_range(a["records"]),
                   "data_storage_locations": (["AWS us-west-2"] + (["AWS eu-west-1"] if "eu" in a.get("data", []) else [])) if a["hosting"] == "Built in-house (cloud)" else (["AWS GovCloud (US) us-gov-west-1"] if a.get("federal") else [f"Vendor: {VENDORS[a['vendor']]['name']}" if a.get('vendor') else "Vendor"]),
                   "countries_and_regions": app_countries(a), "regulatory_scope": app_regs(a), "financially_significant": bool(a.get("fin_sig")),
-                  "customer_facing": a["kind"] == "product", "contractual_commitments": a.get("contractual", ""),
+                  "customer_facing": a["kind"] == "product", "contractual_commitments": bool(a.get("contractual")), "contractual_note": a.get("contractual", ""),
                   "rto_hours": a["rto"], "rpo_hours": a["rpo"], "maximum_tolerable_downtime_hours": a["mtd"], "reputational_impact": a["reputational"],
                   "larkspur_federal": bool(a.get("federal"))})
 counts["applications.csv"] = write("applications.csv", list(arows[0].keys()), arows)
@@ -623,6 +706,11 @@ ahead = ["source_system", "source_id", "cloud_resource_id", "serial_number", "ho
          "end_of_life_date", "last_patched_date", "discovery_source", "last_seen"]
 for a in assets:
     a.setdefault("assigned_to", "")
+    a["asset_type"] = ASSET_TYPE[a["asset_type"]]
+    a["environment"] = ENVIRONMENT[a["environment"]]
+    a["hosting_type"] = HOSTING_TYPE[a["hosting_type"]]
+    a["lifecycle_status"] = LIFECYCLE[a["lifecycle_status"]]
+    a["discovery_source"] = DISCOVERY[a["source_system"]]
     a["services_supported"] = "|".join(SVC[k]["name"] for k in a["services_supported"].split("|") if k) if a["services_supported"] else ""
 counts["assets.csv"] = write("assets.csv", ahead, assets)
 
@@ -689,6 +777,12 @@ check("No Manila person has federal access", not any(byid[i]["site"] == "LP-MNL-
 fed_apps = {a["id"] for a in P["applications"] if a.get("federal")}
 bad = [r_["person_id"] for r_ in app_roles if r_["application_source_id"] in fed_apps and r_["person_id"] not in fed_group]
 check("Everyone with a role on a federal application has federal access", not bad, ", ".join(bad))
+REQUIRED_ROLES = {"Technical owner", "Data owner", "Security contact", "Emergency contact"}
+have = defaultdict(set)
+for r_ in app_roles:
+    have[r_["application_source_id"]].add(r_["role"])
+check("Every application has the required roles (technical owner, data owner, security contact, emergency contact)",
+      all(REQUIRED_ROLES <= have[a["id"]] for a in P["applications"]))
 check("No Manila person is linked to a federal application", not any(byid[r_["person_id"]]["site"] == "LP-MNL-01" for r_ in app_roles if r_["application_source_id"] in fed_apps))
 owners = [r_["person_id"] for r_ in app_roles] + [x["relationship_owner_employee_id"] for x in vrows] + \
          [pid(t["steward"]) for t in P["data_types"]] + [pid(s["facility_manager"]) for s in P["sites"]] + [pid(a["owner"]) for a in P["secure_areas"]]

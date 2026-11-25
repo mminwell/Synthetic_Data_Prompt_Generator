@@ -42,8 +42,14 @@ COMPANY.DEFAULT_RULES = {
     privacy_phi: "hipaa_po", privacy_eu: "dpo", privacy_default: "privacy_analyst",
     continuity: "bcdr_analyst", dr_federal: "fed_eng_dir", dr_inhouse: "sre_head", dr_saas: "it_dir",
   },
-  source_name: "Larkspur application inventory",
-  code_org: "larkspur",
+  /* Every application must have these roles (check 24) */
+  required_app_roles: ["Technical owner", "Data owner", "Security contact", "Emergency contact"],
+  code_repo_base: "https://github.example/larkspur",
+  /* Foundation data type category, by profile data type key (missing keys: Other) */
+  data_type_categories: { payroll: "Financial", kyb: "Financial", card: "Payment card", cui: "Other", hr: "Employee", phi: "Health",
+    eu: "Personal", applicant: "Employee", swift: "Financial", code: "Intellectual property", logs: "Other", finrep: "Financial" },
+  /* Laptops come from md5("<prefix>:laptop:<person ID>"); the GRC seed uses the same formula */
+  laptop_hash_prefix: "larkspur-pay",
   /* Cloud accounts: alias, account ID, region */
   accounts: { us: ["lp-prod-us", "100000000101", "us-west-2"], eu: ["lp-prod-eu", "100000000102", "eu-west-1"],
               dr: ["lp-dr-us", "100000000103", "us-east-2"], gov: ["lp-federal-prod", "100000000201", "us-gov-west-1"],

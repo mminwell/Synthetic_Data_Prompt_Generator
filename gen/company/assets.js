@@ -4,6 +4,25 @@
   const PATCHED = new Set(["Virtual machine", "Container cluster", "Database", "Laptop", "Workstation", "Firewall", "Switch", "Wireless controller", "Server"]);
   const LEVELS = ["Internal", "Confidential", "Restricted"];
 
+  /* A person's laptop, or [] if a leaver's laptop wasn't kept. Same formula as the GRC seed. */
+  COMPANY.laptop = (ctx, p) => {
+    const { RULES, AS_OF } = ctx, A = RULES.assets;
+    const h = COMPANY.md5(`${RULES.laptop_hash_prefix}:laptop:${p.id}`), hex = (a, b) => parseInt(h.slice(a, b), 16);
+    const term = p.status === "terminated";
+    if (term && hex(2, 4) / 255 > A.retired_laptop_share) return [];
+    const mac = hex(0, 2) / 255 < (A.mac_share_divisions[ctx.divisionOf(p.unit)] ?? A.mac_share);
+    const start = p.hire > "2021-01-01" ? p.hire : "2021-01-01";
+    const install = [addDays(start, hex(12, 16) % 365), addDays(AS_OF, -30)].sort()[0];
+    const source = mac ? "Jamf" : "Microsoft Intune";
+    return [{ source_system: source, source_id: `LT-${p.id}`, cloud_resource_id: "", name: `Laptop ${p.id}`, asset_type: "Laptop",
+      environment: "Corporate", hostname: `lp-${p.id.toLowerCase()}`, ip_addresses: `10.60.${hex(18, 20)}.${hex(20, 22) % 250 + 2}`,
+      os: mac ? "macOS 15" : "Windows 11 Enterprise", software: "", manufacturer: mac ? "Apple" : "Dell", model: mac ? "MacBook Pro 14-inch" : "Latitude 7450",
+      serial_number: (mac ? "C02" : "DL") + String(hex(4, 12) % 1e8).padStart(8, "0"), hosting_type: "Endpoint", cloud_provider: "", cloud_account: "",
+      cloud_region: "", location: p.site, technical_owner: ctx.pid(A.it_owner), assigned_to: p.id, services_supported: [], data_classification: "Confidential",
+      lifecycle_status: term ? "Retired" : "In use", install_date: install, end_of_life_date: "",
+      last_patched_date: term ? "" : addDays(AS_OF, -(hex(16, 18) % 42 + 3)), discovery_source: source, last_seen: term ? "" : AS_OF }];
+  };
+
   COMPANY.register({
     id: "assets", title: "Assets (CMDB)", requires: ["applications", "facilities"],
     description: "Cloud clusters, services, databases, buckets, keys, secure-zone hosts, network gear and laptops",
@@ -103,16 +122,9 @@
             manufacturer: mfr, model: mdl, serial: `${mfr.slice(0, 3).toUpperCase()}${nr.range(1e7, 1e8)}`, hostname: `${short}-${slug(ci)}-${String(nr.range(1, 9)).padStart(2, "0")}`,
             services: ["svc_corp_it"].filter(k => ctx.SVC[k]), eol: "2030-12-31" });
       }
-      /* Laptops: one per active or on-leave person, some retired ones for leavers, spares */
-      for (const p of ctx.people) {
-        const lr = ctx.rng("laptop", p.id);
-        const mac = lr() < (A.mac_share_divisions[ctx.divisionOf(p.unit)] ?? A.mac_share);
-        if (p.status === "terminated" && lr() > A.retired_laptop_share) continue;
-        const l = add(lr, { name: `Laptop ${p.id}`, ci: "Laptop", env: "Corporate", hosting: "Endpoint", ownerKey: A.it_owner, source: mac ? "Jamf" : "Microsoft Intune",
-          location: p.site, os: mac ? "macOS 15" : "Windows 11 Enterprise", manufacturer: mac ? "Apple" : "Dell", model: mac ? "MacBook Pro 14-inch" : "Latitude 7450",
-          serial: `${mac ? "C02" : "DL"}${lr.range(1e7, 1e8)}`, hostname: `lp-${p.id.toLowerCase()}`, lifecycle: p.status === "terminated" ? "Retired" : "In use", classification: "Confidential" });
-        l.assigned_to = p.id;
-      }
+      /* Laptops: one per active or on-leave person, plus some retired ones for leavers. Every detail
+         comes from md5("<prefix>:laptop:<person ID>") so the GRC seed rebuilds exactly the same laptops. */
+      for (const p of ctx.people) assets.push(...COMPANY.laptop(ctx, p));
       for (let i = 0; i < A.spare_laptops; i++) {
         const sr = ctx.rng("spare", i);
         add(sr, { name: `Spare laptop ${i + 1}`, ci: "Laptop", env: "Corporate", hosting: "Endpoint", ownerKey: A.it_owner, source: "Jamf", location: A.spare_site,
@@ -128,7 +140,10 @@
         "os", "software", "manufacturer", "model", "hosting_type", "cloud_provider", "cloud_account", "cloud_region", "location",
         "technical_owner", "assigned_to", "services_supported", "data_classification", "lifecycle_status", "install_date",
         "end_of_life_date", "last_patched_date", "discovery_source", "last_seen"];
-      COMPANY.table(ctx, "assets.csv", cols, ctx.assets.map(a => ({ ...a, services_supported: a.services_supported.map(k => ctx.SVC[k].name) })));
+      const FV = COMPANY.FV;
+      COMPANY.table(ctx, "assets.csv", cols, ctx.assets.map(a => ({ ...a, services_supported: a.services_supported.map(k => ctx.SVC[k].name),
+        asset_type: FV.assetType[a.asset_type], environment: FV.environment[a.environment], hosting_type: FV.hostingType[a.hosting_type],
+        lifecycle_status: FV.lifecycle[a.lifecycle_status], discovery_source: FV.discovery[a.source_system] })));
       COMPANY.table(ctx, "links_application_asset.csv", ["application_source_id", "asset_source_id"], ctx.assetLinksApp);
       COMPANY.table(ctx, "links_asset_data_type.csv", ["asset_source_id", "data_type"], ctx.assetLinksDt);
     },

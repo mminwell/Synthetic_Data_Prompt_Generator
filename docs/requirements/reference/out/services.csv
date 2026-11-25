@@ -1,9 +1,9 @@
 service_key,name,service_type,business_units_served,owner_employee_id,customers,status,rto_hours
-svc_payroll,Payroll processing,Business service,OPS-PPO|TEC-ENG-PAY,E10033,External,Active,4
-svc_tax,Payroll tax filing,Business service,OPS-PPO,E10033,External,Active,24
-svc_funds,"Funds movement (ACH, wire, SWIFT)",Business service,FIN-TRS|OPS-PPO,E10037,External,Active,4
-svc_cards,Card acceptance,Business service,TEC-ENG-PMT,E10058,External,Active,4
-svc_support,Customer support,Business service,OPS-SUP,E10036,External,Active,8
-svc_ess,Employee self-service,Business service,TEC-ENG-PAY,E10027,External,Active,8
-svc_federal,Federal payroll service,Business service,FED-ENG,E10022,External,Active,8
-svc_corp_it,Corporate IT services,Internal service,OPS-IT,E10031,Internal,Active,24
+svc_payroll,Payroll processing,Business service,OPS-PPO|TEC-ENG-PAY,E10033,External,Live,4
+svc_tax,Payroll tax filing,Business service,OPS-PPO,E10033,External,Live,24
+svc_funds,"Funds movement (ACH, wire, SWIFT)",Business service,FIN-TRS|OPS-PPO,E10037,External,Live,4
+svc_cards,Card acceptance,Business service,TEC-ENG-PMT,E10058,External,Live,4
+svc_support,Customer support,Business service,OPS-SUP,E10036,External,Live,8
+svc_ess,Employee self-service,Business service,TEC-ENG-PAY,E10027,External,Live,8
+svc_federal,Federal payroll service,Business service,FED-ENG,E10022,External,Live,8
+svc_corp_it,Corporate IT services,Technology service,OPS-IT,E10031,Internal,Live,24

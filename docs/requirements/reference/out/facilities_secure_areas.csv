@@ -1,12 +1,12 @@
 area_id,name,building_id,area_type,access_control,area_owner_employee_id,purpose
-LP-DEN-HQ-SA01,Clinic records room,LP-DEN-HQ-B1,Records room,Badge + PIN; clinic staff only,E10032,Paper medical records and the clinic workstation (HIPAA physical safeguards)
-LP-DEN-HQ-SA02,SOC room,LP-DEN-HQ-B1,Security operations center,Badge; security staff only,E10085,Security operations
-LP-DEN-HQ-SA03,Network closet,LP-DEN-HQ-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
-LP-NYC-01-SA01,SWIFT operations room,LP-NYC-01-B1,Restricted operations room,Badge + PIN; treasury operators only; cameras,E10088,SWIFT operator terminals and jump-server access (SWIFT secure zone)
-LP-NYC-01-SA02,Network closet,LP-NYC-01-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
-LP-ARL-01-SA01,CUI room,LP-ARL-01-B1,Restricted work area,Badge + PIN; US persons only; visitor log,E10022,Federal work and CUI
-LP-ARL-01-SA02,Network closet,LP-ARL-01-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
-LP-DUB-01-SA01,Network closet,LP-DUB-01-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
-LP-LON-01-SA01,Network closet,LP-LON-01-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
-LP-MNL-01-SA01,SOC room,LP-MNL-01-B1,Security operations center,Badge; security staff only; no federal access,E10106,Follow-the-sun security operations
-LP-MNL-01-SA02,Network closet,LP-MNL-01-B1,Network closet,Badge; IT and facilities only,E10031,Comms equipment
+LP-DEN-HQ-SA01,Clinic records room,LP-DEN-HQ-B1,Records room,Badge|PIN,E10032,Paper medical records and the clinic workstation (HIPAA physical safeguards)
+LP-DEN-HQ-SA02,SOC room,LP-DEN-HQ-B1,Other,Badge,E10085,Security operations
+LP-DEN-HQ-SA03,Network closet,LP-DEN-HQ-B1,Network closet,Badge,E10031,Comms equipment
+LP-NYC-01-SA01,SWIFT operations room,LP-NYC-01-B1,Other,Badge|Camera|PIN,E10088,SWIFT operator terminals and jump-server access (SWIFT secure zone)
+LP-NYC-01-SA02,Network closet,LP-NYC-01-B1,Network closet,Badge,E10031,Comms equipment
+LP-ARL-01-SA01,CUI room,LP-ARL-01-B1,Other,Badge|PIN,E10022,Federal work and CUI
+LP-ARL-01-SA02,Network closet,LP-ARL-01-B1,Network closet,Badge,E10031,Comms equipment
+LP-DUB-01-SA01,Network closet,LP-DUB-01-B1,Network closet,Badge,E10031,Comms equipment
+LP-LON-01-SA01,Network closet,LP-LON-01-B1,Network closet,Badge,E10031,Comms equipment
+LP-MNL-01-SA01,SOC room,LP-MNL-01-B1,Other,Badge,E10106,Follow-the-sun security operations
+LP-MNL-01-SA02,Network closet,LP-MNL-01-B1,Network closet,Badge,E10031,Comms equipment

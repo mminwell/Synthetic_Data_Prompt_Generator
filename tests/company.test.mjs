@@ -20,9 +20,59 @@ const refLines = f => readFileSync(path.join(REF, f), "utf8").replace(/\r\n/g, "
 
 const base = run();
 
-test("Larkspur passes all 23 checks", () => {
-  assert.equal(base.checks.length, 23);
+test("Larkspur passes all 24 checks, with the reference's check names", () => {
+  assert.equal(base.checks.length, 24);
   same(failed(base), []);
+  const rep = readFileSync(path.join(REF, "validation-report.md"), "utf8").replace(/\r\n/g, "\n");
+  const refChecks = rep.split("## Checks")[1].split("## Counts")[0].split("\n").filter(l => /^\| (?!Check \||---)/.test(l)).map(l => l.split(" | ")[0].slice(2));
+  same(base.checks.map(c => c.name).sort(), refChecks.sort());
+});
+
+test("files that depend only on the profile and named positions match the reference exactly", () => {
+  const exact = ["facilities_sites.csv", "facilities_buildings.csv", "facilities_secure_areas.csv", "data_types.csv", "products.csv", "services.csv",
+    "business_functions.csv", "business_units.csv", "applications.csv", "application_roles.csv", "groups.csv", "links_application_service.csv",
+    "links_application_data_type.csv", "links_application_vendor.csv", "links_vendor_data_type.csv", "links_service_product.csv",
+    "links_service_data_type.csv", "links_business_function_service.csv"];
+  for (const f of exact) same(COMPANY.toCSV(base.tables[f]).trimEnd().split("\n"), refLines(f), f);
+  // vendors: everything except the randomly dated contracts
+  const drop = l => l.split(",").filter((_, i) => ![12, 13, 14].includes(i)).join(",");
+  const strip = csv => csv.map(l => l.replace(/"[^"]*"/g, m => m.replace(/,/g, ";"))).map(drop);
+  same(strip(COMPANY.toCSV(base.tables["vendors.csv"]).trimEnd().split("\n")), strip(refLines("vendors.csv")), "vendors.csv");
+});
+
+test("md5 matches Node's", async () => {
+  const { createHash } = await import("node:crypto");
+  for (const s of ["", "a", "larkspur-pay:laptop:E10001", "x".repeat(55), "y".repeat(56), "z".repeat(200), "Seán Ó Briain ✓"])
+    assert.equal(COMPANY.md5(s), createHash("md5").update(s, "utf8").digest("hex"), JSON.stringify(s));
+});
+
+test("laptops follow the md5 formula: named positions' laptops match the reference", () => {
+  const ref = refLines("assets.csv"), hdr = ref[0].split(",");
+  const refBy = Object.fromEntries(ref.slice(1).filter(l => l.includes(",LT-")).map(l => [l.split(",")[1], l]));
+  const mine = Object.fromEntries(COMPANY.toCSV(base.tables["assets.csv"]).split("\n").filter(l => l.includes(",LT-")).map(l => [l.split(",")[1], l]));
+  const ignore = hdr.indexOf("install_date");   // depends on the person's hire date, which is random
+  const named = base.people.filter(p => p.position).map(p => `LT-${p.id}`);
+  assert.equal(named.length, 115);
+  for (const id of named) {
+    const a = mine[id].split(","), b = refBy[id].split(",");
+    a[ignore] = b[ignore] = "";
+    same(a, b, id);
+  }
+  assert.ok(Math.abs(Object.keys(mine).length - Object.keys(refBy).length) <= 5, `${Object.keys(mine).length} laptops vs ${Object.keys(refBy).length}`);
+});
+
+test("picklist columns use Foundation values only", () => {
+  const LISTS = {
+    "facilities_sites.csv": { site_type: ["Headquarters", "Office", "Data center", "Colocation", "Warehouse", "Lab", "Coworking"], ownership: ["Owned", "Leased", "Colocation"] },
+    "facilities_secure_areas.csv": { area_type: ["Server room", "Data hall", "Network closet", "Vault", "Records room", "Other"], access_control: ["Badge", "Biometric", "Key", "Escort required", "Camera", "PIN"] },
+    "vendors.csv": { vendor_type: ["Software", "Cloud/hosting", "Services", "Hardware", "Consulting"] },
+    "applications.csv": { hosting_model: ["SaaS", "Cloud (our account)"], source: ["Built in-house", "SaaS"], sign_in_methods: ["SSO", "MFA", "Local accounts", "Other"], lifecycle_status: ["Live"], contractual_commitments: ["Yes", "No"] },
+    "assets.csv": { asset_type: ["Workstation", "Network device", "Cloud resource", "Database", "Storage", "Virtual machine"], environment: ["Production", "DR"],
+      hosting_type: ["Public cloud", "On-premises"], lifecycle_status: ["Operational", "Retired", "Non-operational"], discovery_source: ["Agent", "Cloud API", "Manual"] },
+    "products.csv": { status: ["Live"] }, "services.csv": { status: ["Live"] },
+  };
+  for (const [f, cols] of Object.entries(LISTS)) for (const [c, ok] of Object.entries(cols))
+    for (const r of base.tables[f].rows) for (const v of r[c].split("|")) assert.ok(ok.includes(v), `${f} ${c}: ${v}`);
 });
 
 test("same profile and seed give byte-identical files, also from a fresh load", () => {
@@ -108,6 +158,7 @@ const BREAK = {
   "Every GRC role is filled by an active person": { tamper: c => { const p = pos(c, "pentester"); p.status = "terminated"; p.term = c.AS_OF; } },
   "Site, country and time zone agree": { tamper: c => { c.people[50].tz = "Europe/Paris"; } },
   "Active headcount per site matches the profile (±2)": { tamper: c => c.people.filter(p => p.site === "LP-MNL-01" && !p.position && p.status === "active").slice(0, 3).forEach(p => { p.status = "terminated"; p.term = c.AS_OF; }) },
+  "Every application has the required roles (technical owner, data owner, security contact, emergency contact)": { tamper: c => { c.appRoles = c.appRoles.filter(r => !(r.application_source_id === "APP-001" && r.role === "Emergency contact")); } },
   "Total active headcount is 500 (±2)": { tamper: c => c.people.filter(p => p.site === "LP-MNL-01" && !p.position && p.status === "active").slice(0, 3).forEach(p => { p.status = "terminated"; p.term = c.AS_OF; }) },
   "Larkspur Federal staff work in US locations": { tamper: c => { person(c, p => c.divisionOf(p.unit) === "FED").site = "LP-DUB-01"; } },
   "No Manila person has federal access": { tamper: c => c.groups["Federal access (US persons)"].add(person(c, p => p.site === "LP-MNL-01").id) },

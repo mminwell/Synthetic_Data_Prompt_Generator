@@ -47,7 +47,7 @@ Propose a plan before changing code.
 | No vendors, applications as their own records, data types, secure areas, products, services, business functions, groups | New generators (see the reference) |
 | Profile and HR details mixed | Separate `people.csv` (profile) and `people_hr.csv` (restricted HR details) |
 | Three pages to line up by hand | One "Generate company" producing a .zip of all files plus a validation report |
-| No consistency checks | The 23 checks in the reference `validation-report.md` |
+| No consistency checks | The 24 checks in the reference `validation-report.md` |
 
 ## 3. Generation pipeline (follow the reference order)
 1. **Load and check the profile.** Reject stray empty values: an unquoted comma in YAML silently splits a value; the reference caught this.
@@ -103,7 +103,7 @@ Exactly the files and columns in `reference/out/` (column headers are the contra
 ## 6. Phases
 | Phase | Scope | Done when |
 |---|---|---|
-| 1 | Port the reference pipeline to JavaScript; load `larkspur-pay.profile.yaml`; generate the .zip and validation report | Larkspur generates in the browser, all 23 checks pass, file and column names match the reference, row counts within ±2% of the reference |
+| 1 | Port the reference pipeline to JavaScript; load `larkspur-pay.profile.yaml`; generate the .zip and validation report | Larkspur generates in the browser, all 24 checks pass, file and column names match the reference, row counts within ±2% of the reference |
 | 2 | Company builder steps over the profile; upload and download the profile | A new company can be built from defaults in under 10 minutes; editing a value and regenerating changes only what it should |
 | 3 | Table editors for applications, vendors and positions; import those from CSV | Larkspur's lists can be edited in the page instead of the YAML |
 | 4 | GRC history files (risks, policies and statements, controls and tests, findings, incidents, assessments), once the GRC platform's import templates exist | Larkspur's 2024–2026 history (audits, the four incidents, the federal monitoring gap) loads into the GRC platform |
@@ -122,3 +122,26 @@ Exactly the files and columns in `reference/out/` (column headers are the contra
 - **Larkspur Federal is its own division.** Its 50 people are counted there, not in Technology, Operations or Sales and Marketing.
 - **Unit heads and facility managers** reference people. The GRC import loads people first, then sets these in a second pass.
 - **Real vendor names:** keep `name_is_real_company` accurate, and never generate findings that look like real statements about a real company outside the synthetic files.
+
+## 9. Changes after the GRC Foundation database was built (2026-11-25)
+- **Foundation value lists.** Output now uses the exact picklist values from the Foundation design, so the GRC import accepts every row. Examples:
+  - Site types: Headquarters or Office.
+  - Ownership: Leased.
+  - Secure area types: Records room, Network closet, Other.
+  - Access control: Badge, PIN, Camera.
+  - Vendor types: Software, Cloud/hosting, Services, Hardware, Consulting. The profile's descriptive type moves to a new `description` column.
+  - Applications:
+    - `hosting_model` is SaaS or Cloud (our account); `source` is Built in-house or SaaS.
+    - `sign_in_methods` is SSO, MFA, Local accounts, Other.
+    - Lifecycle is Live.
+    - Users affected is split into `internal_users` and `external_users`.
+    - New columns: `data_classification`, and `contractual_note` beside a Yes/No `contractual_commitments`.
+  - Assets:
+    - Asset types: Workstation, Network device, Cloud resource, Database, Storage, Virtual machine.
+    - Environments: Production, DR. Hosting types: Public cloud, On-premises.
+    - Lifecycle: Operational, Retired, Non-operational. Discovery source: Agent, Cloud API, Manual.
+  - Products and services: status Live; internal services are "Technology service".
+
+  The mapping functions are in the "Foundation value lists" block of `reference/generate.py`.
+- **Emergency contact.** Every application now has an emergency contact, which is a required role, and there's a new check for the four required roles. That makes 24 checks.
+- **Laptops are derived from the person.** Every laptop field comes from `md5("larkspur-pay:laptop:<person ID>")`, and laptop source IDs are `LT-<person ID>`. The GRC seed rebuilds identical laptops inside the database instead of shipping 540 rows. Keep the formula if you port it, or the GRC seed and your output will differ.

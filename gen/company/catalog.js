@@ -35,21 +35,21 @@
       const { P, DTYPES, SVC } = ctx;
       const dt = k => DTYPES[k].name;
       COMPANY.table(ctx, "data_types.csv", ["name", "category", "classification", "regulatory_tags", "data_steward_employee_id"],
-        P.data_types.map(t => ({ name: t.name, category: t.category, classification: t.classification, regulatory_tags: t.regulatory_tags, data_steward_employee_id: ctx.pid(t.steward) })));
+        P.data_types.map(t => ({ name: t.name, category: ctx.RULES.data_type_categories[t.key] || "Other", classification: t.classification, regulatory_tags: t.regulatory_tags, data_steward_employee_id: ctx.pid(t.steward) })));
       ctx.vendorRows = P.vendors.map(v => {
         const [cs, ce, cr] = contract(ctx, v.code);
-        return { vendor_code: v.code, name: v.name, website_domain: v.domain, vendor_type: v.type, tier: v.tier, status: "Active",
+        return { vendor_code: v.code, name: v.name, website_domain: v.domain, vendor_type: COMPANY.FV.vendorType(v.type), description: v.type, tier: v.tier, status: "Active",
           relationship_owner_employee_id: ctx.pid(v.owner), business_units_using: v.units || [], data_types_accessed: (v.data || []).map(dt),
           system_access: !!v.system_access, country: v.country || "", contract_start: cs, contract_end: ce, renewal_notice_date: cr,
           name_is_real_company: !v.fictional, note: v.note || "" };
       });
       COMPANY.table(ctx, "vendors.csv", Object.keys(ctx.vendorRows[0]), ctx.vendorRows);
       COMPANY.table(ctx, "products.csv", ["product_key", "name", "business_unit_code", "owner_employee_id", "status", "markets", "revenue_supported", "rto_hours", "customer_facing"],
-        (P.products || []).map(p => ({ product_key: p.key, name: p.name, business_unit_code: p.unit, owner_employee_id: ctx.pid(p.owner), status: "Active",
+        (P.products || []).map(p => ({ product_key: p.key, name: p.name, business_unit_code: p.unit, owner_employee_id: ctx.pid(p.owner), status: "Live",
           markets: p.markets, revenue_supported: p.revenue, rto_hours: p.rto_hours, customer_facing: p.customer_facing })));
       COMPANY.table(ctx, "services.csv", ["service_key", "name", "service_type", "business_units_served", "owner_employee_id", "customers", "status", "rto_hours"],
-        (P.services || []).map(s => ({ service_key: s.key, name: s.name, service_type: s.type, business_units_served: s.units, owner_employee_id: ctx.pid(s.owner),
-          customers: s.customers, status: "Active", rto_hours: s.rto_hours })));
+        (P.services || []).map(s => ({ service_key: s.key, name: s.name, service_type: COMPANY.FV.serviceType(s.type), business_units_served: s.units, owner_employee_id: ctx.pid(s.owner),
+          customers: s.customers, status: "Live", rto_hours: s.rto_hours })));
       COMPANY.table(ctx, "business_functions.csv", ["name", "business_unit_code", "criticality"],
         (P.business_functions || []).map(b => ({ name: b.name, business_unit_code: b.unit, criticality: b.criticality })));
       const product = k => (P.products.find(p => p.key === k) || { name: k }).name;
