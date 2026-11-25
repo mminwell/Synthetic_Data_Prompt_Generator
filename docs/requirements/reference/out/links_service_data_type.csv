@@ -1,0 +1,12 @@
+service,data_type
+Payroll processing,Customers' employee payroll data
+Payroll tax filing,Customers' employee payroll data
+"Funds movement (ACH, wire, SWIFT)",Customers' employee payroll data
+"Funds movement (ACH, wire, SWIFT)",SWIFT payment messages
+Card acceptance,Cardholder data (tokens only)
+Customer support,Customers' employee payroll data
+Customer support,EU and UK personal data
+Employee self-service,Customers' employee payroll data
+Federal payroll service,Controlled unclassified information (CUI)
+Federal payroll service,Customers' employee payroll data
+Corporate IT services,Employee personal data

@@ -1,0 +1,52 @@
+unit_code,name,level,parent_unit_code,pass_through,head_employee_id,legal_entities,primary_site_id,status
+LP,Larkspur Pay,Company,,No,E10001,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+EXE,Executive Office,Division,LP,No,E10001,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+EXE-OFF,Executive Office,Business unit,EXE,Yes,E10001,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+FIN,Finance,Division,LP,No,E10002,"Larkspur Pay, Inc.",LP-NYC-01,Active
+FIN-ACC,Accounting and Reporting,Business unit,FIN,No,E10015,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+FIN-TRS,Treasury,Business unit,FIN,No,E10037,"Larkspur Pay, Inc.",LP-NYC-01,Active
+FIN-TRS-SWF,SWIFT Operations,Department,FIN-TRS,No,E10088,"Larkspur Pay, Inc.",LP-NYC-01,Active
+FIN-FPA,Financial Planning and Analysis,Business unit,FIN,No,E10025,"Larkspur Pay, Inc.",LP-NYC-01,Active
+OPS,Operations,Division,LP,No,E10004,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+OPS-SUP,Customer Support,Business unit,OPS,No,E10036,"Larkspur Pay Europe Limited|Larkspur Pay Philippines, Inc.|Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-MNL-01,Active
+OPS-PPO,Payroll and Payment Operations,Business unit,OPS,No,E10033,"Larkspur Pay Europe Limited|Larkspur Pay Philippines, Inc.|Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+OPS-IT,Corporate IT,Business unit,OPS,No,E10031,"Larkspur Pay Europe Limited|Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+OPS-WRK,Workplace and Facilities,Business unit,OPS,No,E10021,"Larkspur Pay Philippines, Inc.|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC,Technology,Division,LP,No,E10009,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC-ENG,Engineering,Business unit,TEC,No,E10039,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC-ENG-PAY,Payroll Engineering,Department,TEC-ENG,No,E10059,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC-ENG-PMT,Payments Engineering,Department,TEC-ENG,No,E10058,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC-ENG-PLT,Platform Engineering,Department,TEC-ENG,No,E10060,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+TEC-SRE,Infrastructure and SRE,Business unit,TEC,No,E10035,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+PRD,Product,Division,LP,No,E10005,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+PRD-PM,Product Management,Business unit,PRD,Yes,E10005,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+REV,Sales and Marketing,Division,LP,No,E10006,"Larkspur Pay, Inc.",LP-NYC-01,Active
+REV-SLS,Sales,Business unit,REV,No,E10045,"Larkspur Pay Europe Limited|Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-NYC-01,Active
+REV-MKT,Marketing,Business unit,REV,No,E10041,"Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+REV-CS,Customer Success,Business unit,REV,No,E10019,Larkspur Pay UK Ltd,LP-LON-01,Active
+SEC,Security,Division,LP,No,E10008,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-CYB,Cyber Security,Business unit,SEC,No,E10014,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-CYB-ENG,Security Architecture and Engineering,Department,SEC-CYB,No,E10084,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-CYB-OPS,Security Operations,Department,SEC-CYB,No,E10085,"Larkspur Pay Europe Limited|Larkspur Pay Philippines, Inc.|Larkspur Pay, Inc.",LP-MNL-01,Active
+SEC-CYB-APP,Application Security,Department,SEC-CYB,No,E10046,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-CYB-IAM,Identity and Access Management,Department,SEC-CYB,No,E10073,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-GRC,Security GRC,Business unit,SEC,No,E10034,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-ORK,Operational Risk,Business unit,SEC,No,E10042,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-ORK-TPR,Third-Party Risk,Department,SEC-ORK,No,E10089,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-PSR,Physical Security and Resilience,Business unit,SEC,No,E10043,"Larkspur Pay Philippines, Inc.|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+SEC-PSR-BCDR,Business Continuity and Disaster Recovery,Department,SEC-PSR,No,E10050,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+RSK,Risk,Division,LP,No,E10007,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+RSK-ERM,Enterprise Risk,Business unit,RSK,No,E10040,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+RSK-CMP,Compliance,Business unit,RSK,No,E10038,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-NYC-01,Active
+RSK-PRV,Privacy,Business unit,RSK,No,E10018,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+LGL,Legal,Division,LP,No,E10012,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+LGL-LGL,Legal,Business unit,LGL,Yes,E10012,"Larkspur Pay Europe Limited|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+PPL,People,Division,LP,No,E10003,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+PPL-HR,Human Resources,Business unit,PPL,No,E10028,"Larkspur Pay Europe Limited|Larkspur Pay Philippines, Inc.|Larkspur Pay UK Ltd|Larkspur Pay, Inc.",LP-DEN-HQ,Active
+PPL-CLN,Health Clinic,Business unit,PPL,No,E10032,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+AUD,Internal Audit,Division,LP,No,E10013,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+AUD-IA,Internal Audit,Business unit,AUD,Yes,E10013,"Larkspur Pay, Inc.",LP-DEN-HQ,Active
+FED,Larkspur Federal,Division,LP,No,E10011,"Larkspur Pay, Inc.",LP-ARL-01,Active
+FED-SLS,Federal Sales,Business unit,FED,No,E10023,"Larkspur Pay, Inc.",LP-ARL-01,Active
+FED-ENG,Federal Engineering and Operations,Business unit,FED,No,E10022,"Larkspur Pay, Inc.",LP-ARL-01,Active
+FED-SUP,Federal Support,Business unit,FED,No,E10024,"Larkspur Pay, Inc.",LP-ARL-01,Active

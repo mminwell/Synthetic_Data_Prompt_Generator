@@ -1,0 +1,51 @@
+vendor_code,data_type
+V-AWS,Customers' employee payroll data
+V-AWS,Customer business (KYB) data
+V-AWS,Cardholder data (tokens only)
+V-AWS,Controlled unclassified information (CUI)
+V-AWS,EU and UK personal data
+V-AWS,Security logs
+V-AWS,Source code
+V-FRNB,Customers' employee payroll data
+V-FRNB,Customer business (KYB) data
+V-FRNB,SWIFT payment messages
+V-ADYEN,Cardholder data (tokens only)
+V-ADYEN,Customer business (KYB) data
+V-OKTA,Employee personal data
+V-PLAID,Customers' employee payroll data
+V-WDAY,Employee personal data
+V-SFDC,Customer business (KYB) data
+V-ZEND,Customers' employee payroll data
+V-ZEND,EU and UK personal data
+V-MSFT,Employee personal data
+V-MSFT,EU and UK personal data
+V-MSFT,Financial reporting data
+V-SNOW,Customers' employee payroll data
+V-SNOW,EU and UK personal data
+V-SNOW,Financial reporting data
+V-GH,Source code
+V-CRWD,Security logs
+V-SPLK,Security logs
+V-SPLK,Employee personal data
+V-ATHN,Employee health information (PHI)
+V-CHKR,Applicant and background-check data
+V-CHKR,EU and UK personal data
+V-TWLO,Customers' employee payroll data
+V-CALB,Employee health information (PHI)
+V-CALB,Employee personal data
+V-GHSE,Applicant and background-check data
+V-ORCL,Financial reporting data
+V-SVNW,Employee personal data
+V-ATLS,Source code
+V-WIZ,Security logs
+V-PFPT,Employee personal data
+V-KB4,Employee personal data
+V-VRKD,Employee personal data
+V-DOCU,Employee personal data
+V-CLDF,Security logs
+V-XPNS,Employee personal data
+V-HPLLP,Financial reporting data
+V-HPLLP,Security logs
+V-BRFA,Security logs
+V-CLLP,Employee personal data
+V-GPRC,Applicant and background-check data

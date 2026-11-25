@@ -1,0 +1,8 @@
+group_name,description
+Clinic staff,On-site clinic staff (HIPAA workforce)
+Executive leadership team,CEO and direct reports
+Federal access (US persons),People allowed to access Larkspur Federal systems and the CUI room
+GRC platform administrators,Administrators of the GRC platform
+Risk committee attendees,Management attendees of the Board Risk Committee
+SWIFT operators,Treasury staff allowed into the SWIFT operations room and secure zone
+Security operations,"Security operations analysts across Denver, Dublin, Manila and Arlington"

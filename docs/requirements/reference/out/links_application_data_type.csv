@@ -1,0 +1,60 @@
+application_source_id,data_type
+APP-001,Customers' employee payroll data
+APP-001,EU and UK personal data
+APP-002,Cardholder data (tokens only)
+APP-002,Customer business (KYB) data
+APP-002,EU and UK personal data
+APP-003,Controlled unclassified information (CUI)
+APP-003,Customers' employee payroll data
+APP-004,Customers' employee payroll data
+APP-004,EU and UK personal data
+APP-005,Customers' employee payroll data
+APP-006,Customers' employee payroll data
+APP-007,Customers' employee payroll data
+APP-008,Customers' employee payroll data
+APP-008,SWIFT payment messages
+APP-009,Cardholder data (tokens only)
+APP-010,Customers' employee payroll data
+APP-010,Financial reporting data
+APP-011,Customer business (KYB) data
+APP-011,EU and UK personal data
+APP-012,Customers' employee payroll data
+APP-012,Cardholder data (tokens only)
+APP-013,Customer business (KYB) data
+APP-013,Financial reporting data
+APP-014,Customers' employee payroll data
+APP-015,Customers' employee payroll data
+APP-015,EU and UK personal data
+APP-015,Financial reporting data
+APP-016,Customers' employee payroll data
+APP-017,Customers' employee payroll data
+APP-017,EU and UK personal data
+APP-018,Customers' employee payroll data
+APP-018,EU and UK personal data
+APP-019,Controlled unclassified information (CUI)
+APP-020,Customers' employee payroll data
+APP-020,EU and UK personal data
+APP-021,Employee personal data
+APP-021,EU and UK personal data
+APP-022,Applicant and background-check data
+APP-023,Financial reporting data
+APP-024,Customer business (KYB) data
+APP-025,Customers' employee payroll data
+APP-025,EU and UK personal data
+APP-026,Employee personal data
+APP-027,Employee personal data
+APP-027,EU and UK personal data
+APP-027,Financial reporting data
+APP-028,Employee personal data
+APP-029,Source code
+APP-030,Source code
+APP-031,Employee personal data
+APP-033,Security logs
+APP-034,Security logs
+APP-034,Employee personal data
+APP-035,Security logs
+APP-036,Employee personal data
+APP-037,Employee personal data
+APP-038,Employee health information (PHI)
+APP-039,Employee personal data
+APP-040,Employee personal data

@@ -1,0 +1,13 @@
+name,category,classification,regulatory_tags,data_steward_employee_id
+Customers' employee payroll data,Financial personal data,Restricted,GLBA|State privacy laws,E10033
+Customer business (KYB) data,Customer due diligence,Restricted,BSA/AML,E10051
+Cardholder data (tokens only),Payment card data,Restricted,PCI DSS,E10058
+Controlled unclassified information (CUI),Government data,Restricted,NIST SP 800-171|CMMC|DFARS,E10022
+Employee personal data,Employee personal data,Confidential,GDPR|UK GDPR|Philippine Data Privacy Act|State privacy laws,E10028
+Employee health information (PHI),Health data,Restricted,HIPAA,E10072
+EU and UK personal data,Personal data,Restricted,GDPR|UK GDPR,E10057
+Applicant and background-check data,Employee personal data,Confidential,FCRA|GDPR,E10028
+SWIFT payment messages,Payment instructions,Restricted,SWIFT CSP,E10037
+Source code,Intellectual property,Confidential,,E10039
+Security logs,Operational data,Confidential,,E10085
+Financial reporting data,Financial data,Confidential,SOC 1,E10015

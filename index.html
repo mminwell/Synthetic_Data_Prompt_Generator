@@ -99,7 +99,8 @@ body:not(.use-profile) .profile-only{display:none!important}body.use-profile .no
 <nav class="side" id="side">
 <div class="brand"><div class="eyebrow">Synthetic data</div><div class="brand-name">Data Generator</div></div>
 <a class="nav" href="#home" data-nav="home">Home</a>
-<div class="eyebrow navlbl">Data types</div>
+<a class="nav" href="#company" data-nav="company">Build a company</a>
+<div class="eyebrow navlbl">Quick datasets</div>
 </nav>
 <main class="main" id="main">
 <div class="view" id="view-home">
@@ -107,7 +108,11 @@ body:not(.use-profile) .profile-only{display:none!important}body.use-profile .no
 <p class="sub">Generate realistic, entirely fictional test data right in your browser, with exactly the fields, countries and mix you choose. Or get a ready-made prompt to use with any LLM.</p>
 
 <section>
-<div class="sh"><div class="eyebrow">01 — How it works</div><h2>Three steps</h2></div>
+<div class="panel card"><div class="eyebrow">Whole company</div><h2>Build a company</h2><p>Generate a complete fictional company from one profile: business units, people, facilities, vendors, applications and assets that all line up, checked and packed as a .zip of CSVs. Pick only the parts you need, or start from the Larkspur Pay example.</p><a class="btn btn-primary" href="#company">Build a company →</a></div>
+</section>
+
+<section>
+<div class="sh"><div class="eyebrow">01 — Quick datasets</div><h2>One dataset in three steps</h2></div>
 <div class="grid g3">
 <div class="panel"><div class="stepn">01</div><h3>Pick a data type</h3><p class="hint" style="font-size:14px">Choose HR, Facilities or CMDB from the sidebar.</p></div>
 <div class="panel"><div class="stepn">02</div><h3>Choose options</h3><p class="hint" style="font-size:14px">Tick fields, set countries and mixes, and pick an output format.</p></div>
@@ -139,7 +144,7 @@ body:not(.use-profile) .profile-only{display:none!important}body.use-profile .no
 </section>
 
 <section>
-<div class="sh"><div class="eyebrow">03 — Data types</div><h2>What you can generate</h2></div>
+<div class="sh"><div class="eyebrow">03 — Quick datasets</div><h2>Generate one area on its own</h2></div>
 <div class="grid g3" id="typeCards"></div>
 </section>
 
@@ -383,7 +388,7 @@ function closePrompt(){$("#pm").hidden=true;MODAL.b=null;MODAL.last&&MODAL.last.
 /* ---------- routing + global updates ---------- */
 let raf=0;function changed(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{renderProfile();Object.values(B).forEach(b=>b.update())})}
 document.addEventListener("input",changed);document.addEventListener("change",changed);
-function route(){const id=(location.hash||"#home").slice(1),ok=id==="home"||B[id];$$(".view").forEach(v=>v.hidden=v.id!=="view-"+(ok?id:"home"));$$(".nav").forEach(a=>a.classList.toggle("active",a.dataset.nav===(ok?id:"home")));if(id==="company-profile")document.getElementById(id).scrollIntoView();else window.scrollTo(0,0)}
+function route(){const id=(location.hash||"#home").slice(1),ok=id==="home"||id==="company"||B[id];$$(".view").forEach(v=>v.hidden=v.id!=="view-"+(ok?id:"home"));$$(".nav").forEach(a=>a.classList.toggle("active",a.dataset.nav===(ok?id:"home")));if(id==="company-profile")document.getElementById(id).scrollIntoView();else window.scrollTo(0,0)}
 window.addEventListener("hashchange",route);
 </script>
 <script src="gen/common.js"></script>
@@ -393,6 +398,16 @@ window.addEventListener("hashchange",route);
 <script src="types/hr.js"></script>
 <script src="types/facilities.js"></script>
 <script src="types/cmdb.js"></script>
+<script src="gen/company/core.js"></script>
+<script src="gen/company/rules.js"></script>
+<script src="gen/company/org.js"></script>
+<script src="gen/company/facilities.js"></script>
+<script src="gen/company/catalog.js"></script>
+<script src="gen/company/applications.js"></script>
+<script src="gen/company/assets.js"></script>
+<script src="gen/company/report.js"></script>
+<script src="profiles/larkspur-pay.js"></script>
+<script src="ui/company.js"></script>
 <script>
 $("#side").insertAdjacentHTML("beforeend",'<div class="side-foot"><span class="eyebrow">Company profile</span><span id="profBadge" class="badge badge-neutral">Off</span></div>');
 HR.gen=HR_GEN;FAC.gen=FAC_GEN;CMDB.gen=CMDB_GEN;
